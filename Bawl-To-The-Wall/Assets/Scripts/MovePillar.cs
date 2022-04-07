@@ -71,12 +71,12 @@ public class MovePillar : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
         timeAwake += Time.deltaTime;
-        if (timeAwake > 10)
+        if (timeAwake > 10 || gameManager.isBetweenRound)
         {
             isMoving = true;
             isMovingForward = false;
-            Debug.Log("pillar has been spawned for too long");
         }
 
         if (!gameManager.isGameOver)
@@ -604,7 +604,7 @@ public class MovePillar : MonoBehaviour
         else if (other.CompareTag("Chicken"))
         {
             Debug.Log("Chicken was hit");
-            
+
         }
 
     }

@@ -9,7 +9,6 @@ public class SpawnPillars : MonoBehaviour
 
     private GameManager gameManager;
     private int difficulty;
-    private int spawnTypesPerRound;
 
     /*
      * Walls array:
@@ -39,10 +38,9 @@ public class SpawnPillars : MonoBehaviour
     //transform of opposite wall - where the pillar transform is when fully extended
     public float spawnOffset = 150;
 
-    public float delayedSpawnTime = 5.0f;
     public float repeatSpawnTime = 10.0f;
 
-    public int[] weights = { 0, 0, 0, 0, 0, 0, 0 };
+    private int[] weights = { 0, 0, 0, 0, 0, 0, 0 };
 
 
 
@@ -69,21 +67,13 @@ public class SpawnPillars : MonoBehaviour
     }
 
 
-    public void startRound()
-    {
 
-        InvokeRepeating("SpawnPillar", delayedSpawnTime, repeatSpawnTime);
-
-
-
-        //gameManager.newRound();
-    }
 
 
 
     void SpawnPillar()
     {
-        if (gameManager.isGameActive && !gameManager.isGameOver)
+        if (gameManager.isGameActive && !gameManager.isGameOver && !gameManager.isBetweenRound)
         {
             int behavior = GetRandBehavior();
 
@@ -180,7 +170,8 @@ public class SpawnPillars : MonoBehaviour
 
 
         float waitTime = selectedIndicator.GetComponent<IndicatorBehavior>().timeAwake;
-        StartCoroutine(IndicatorWaitTime(waitTime, selectedIndicator, wallIndex, behavior));
+        if(!gameManager.isBetweenRound)
+            StartCoroutine(IndicatorWaitTime(waitTime, selectedIndicator, wallIndex, behavior));
 
     }
 
@@ -240,7 +231,7 @@ public class SpawnPillars : MonoBehaviour
 
     IEnumerator IndicatorWaitTime(float waitTime, GameObject SelectedIndicator, int wallIndex, int behavior)
     {
-
+        if (gameManager.isBetweenRound) yield return new WaitForSeconds(0);
         SelectedIndicator.GetComponent<IndicatorBehavior>().Activate(behavior);
 
         //Selects random Pillar position from selection
@@ -251,7 +242,7 @@ public class SpawnPillars : MonoBehaviour
         //Debug.Log("Wall Index: " + wallIndex);
         yield return new WaitForSeconds(waitTime);
 
-        if (gameManager.isGameActive && !gameManager.isGameOver)
+        if (gameManager.isGameActive && !gameManager.isGameOver && !gameManager.isBetweenRound)
         {
             //spawns pillar
             GameObject Pillar = Instantiate(pillar, GetSpawnPos(randPillarPos, wallIndex), Quaternion.Euler(rotation));
@@ -377,8 +368,6 @@ public class SpawnPillars : MonoBehaviour
             }
         }
 
-
-
         return newIndicatorList;
     }
 
@@ -400,31 +389,11 @@ public class SpawnPillars : MonoBehaviour
 
         }
 
-
-
         List<GameObject> indicatorRows = GetIndicatorRows(wallIndicators);
 
         return GetIndicatorList(indicatorRows);
     }
 
-
-
-    ////finds the wall indeicator list inside of the wall
-    //GameObject GetWallIndicator(GameObject[] wallChildren)
-    //{
-
-    //    for (int index = 0; index < wallChildren.Length; index++)
-    //    {
-    //        if (wallChildren[index].CompareTag("Wall Indicator"))
-    //        {
-    //            return wallChildren[index];
-
-    //        }
-    //    }
-    //    //Debug.Log("wall does not have any wall Indicators");
-    //    return null;
-
-    //}
 
     //gathers all the indicator rows inside of wallIndicators
     List<GameObject> GetIndicatorRows(GameObject wallIndicators)
@@ -458,47 +427,30 @@ public class SpawnPillars : MonoBehaviour
     //selects an indicator from the list provided
     GameObject SelectedIndicator(List<GameObject> list)
     {
-        if (list.Count <= 0)
+        //makes sure list is not empty
+        if (list.Count == 0)
         {
-            //Debug.Log("list is empty");
             return null;
         }
-        //makes sure list is not empty
 
-        //bool isActive = true;
-        //if returns list[-1], that means there was a glitch in unity
+
+
         int randomIndex = -1;
 
         //makes sure there is an indicator available
         if (!AllIndicatorsActive(list))
         {
-            //int count = 0;
-            //continues loop until an indicator is selected that is not active
-            //while (isActive && count < 20)
-            //{
+
 
             randomIndex = Random.Range(0, list.Count);
-            //Debug.Log("min range: " + 0 + ", max range: " + list.Count);
-
-            //Debug.Log("randomIndex = " + randomIndex);
 
             GameObject indicator = list[randomIndex];
             IndicatorBehavior script = indicator.GetComponent<IndicatorBehavior>();
             if (script == null || script.isActive == true)
             {
-                //Debug.Log("Indicator does not have script or indicator is being used");
                 return null;
-                //count = 20;
             }
-            //if (script.isActive == true)
-            //{
-            //    return null;
-            //}
 
-            //isActive = script.isActive;
-            //count++;
-            //}
-            //if (count >= 20) return null;
             return list[randomIndex];
         }
 
@@ -548,8 +500,6 @@ public class SpawnPillars : MonoBehaviour
                 list.Add(o.transform.GetChild(index).gameObject);
             }
         }
-
-
         return list;
     }
 
@@ -588,50 +538,6 @@ public class SpawnPillars : MonoBehaviour
         {
             result = 6;
         }
-
-
-        //switch (randomInt)
-        //{
-        //    case int n when (n <= weights[0]):
-        //        {
-        //            result = 0;
-        //        }break;
-        //    case int n when (n > weights[0] && n <= summation(weights, 1)):
-        //        {
-        //            result = 1;
-        //        }
-        //        break;
-        //    case int n when (n > summation(weights, 1) && n <= summation(weights, 2)):
-        //        {
-        //            result = 2;
-        //        }
-        //        break;
-        //    case int n when (n > summation(weights, 2) && n <= summation(weights, 3)):
-        //        {
-        //            result = 3;
-        //        }
-        //        break;
-        //    case int n when (n > summation(weights, 3) && n <= summation(weights, 4)):
-        //        {
-        //            result = 4;
-        //        }
-        //        break;
-        //    case int n when (n > summation(weights, 4) && n <= summation(weights, 5)):
-        //        {
-        //            result = 5;
-        //        }
-        //        break;
-        //    case int n when (n > summation(weights, 5) && n <= summation(weights, 6)):
-        //        {
-        //            result = 6;
-        //        }
-        //        break;
-        //}
-
-
-
-
-
         return result;
     }
 
@@ -660,15 +566,7 @@ public class SpawnPillars : MonoBehaviour
     }
 
 
-    public void newRound()
-    {
 
-        adjustWeights();
-        increaseSpawnTypesPerRound();
-        //startRound();
-
-
-    }
 
 
     void adjustWeights()
@@ -774,12 +672,6 @@ public class SpawnPillars : MonoBehaviour
                 }
                 break;
         }
-
-
-
-        //if game is set to medium
-        //if game is set to hard
-
     }
 
 
@@ -797,12 +689,7 @@ public class SpawnPillars : MonoBehaviour
 
 
 
-    public void setDifficulty(int difficulty)
-    {
-        
-        this.difficulty = difficulty;
-        setWeights();
-    }
+
 
     void setWeights()
     {
@@ -832,28 +719,34 @@ public class SpawnPillars : MonoBehaviour
     }
 
 
-    void increaseSpawnTypesPerRound()
+
+
+
+
+    public void startRound()
     {
-        switch (difficulty)
-        {
-            case 1:
-                {
-                    spawnTypesPerRound += 10;
-                }
-                break;
-            case 2:
-                {
-                    spawnTypesPerRound += 20;
-
-                }
-                break;
-            case 3:
-                {
-                    spawnTypesPerRound += 30;
-
-                }
-                break;
-        }
+        InvokeRepeating("SpawnPillar", 0.0f, repeatSpawnTime);
     }
+
+    public void stopRound()
+    {
+        CancelInvoke();
+    }
+
+    public void setDifficulty(int difficulty)
+    {
+        this.difficulty = difficulty;
+        setWeights();
+    }
+
+    public void newRound()
+    {
+        stopRound();
+        adjustWeights();
+    }
+
+
+
+
 
 }

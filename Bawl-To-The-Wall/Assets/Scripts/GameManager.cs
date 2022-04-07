@@ -9,6 +9,9 @@ public class GameManager : MonoBehaviour
 {
     public bool isGameActive;
     public bool isGameOver;
+    public bool isBetweenRound;
+
+
     public int roundNumber = 0;
 
     public Canvas MainCanvas;
@@ -22,6 +25,7 @@ public class GameManager : MonoBehaviour
     public GameObject roundCountText;
     public GameObject youSurvivedText;
     public GameObject returnToMenu;
+    public GameObject newRoundText;
 
     public GameObject spawnManager;
 
@@ -29,19 +33,28 @@ public class GameManager : MonoBehaviour
     public float volume = 1.0f;
     public float musicVolume = 1.0f;
 
+    public int orbCount;
+    public int orbsPerRound = 5;
+    private int maxOrbsPerRound = 30;
+    public GameObject orbCounterText;
 
 
-
-
+    private SpawnPillars pillarSpawnScript;
+    private SpawnOrbs spawnOrbsScript;
 
 
 
     // Start is called before the first frame update
     void Start()
     {
+
+        pillarSpawnScript = spawnManager.GetComponent<SpawnPillars>();
+        spawnOrbsScript = spawnManager.GetComponent<SpawnOrbs>();
+
         Debug.Log("Round: " + roundNumber);
         isGameActive = false;
         isGameOver = false;
+        isBetweenRound = false;
         Debug.Log("Game Over: " + "false");
 
 
@@ -57,37 +70,36 @@ public class GameManager : MonoBehaviour
         youSurvivedText.SetActive(false);
         gameOverText.SetActive(false);
         returnToMenu.SetActive(false);
+        orbCounterText.SetActive(false);
+        newRoundText.SetActive(false);
 
         startGame(1);
     }
 
     // Update is called once per frame
-    void Update()
-    {
+    //void Update()
+    //{
 
-    }
-
+    //}
 
     public void playButtonPressed()
     {
         mainMenu.SetActive(false);
         playMenu.SetActive(true);
     }
+
     public void SettingsButtonPressed()
     {
         mainMenu.SetActive(false);
         settingsMenu.SetActive(true);
     }
+
     public void BackButtonPressed()
     {
         playMenu.SetActive(false);
         settingsMenu.SetActive(false);
         mainMenu.SetActive(true);
     }
-
-
-
-
 
     public void setVolume(float volumeLevel)
     {
@@ -107,14 +119,21 @@ public class GameManager : MonoBehaviour
 
 
 
+
+
+
+
+
+
+
     public void gameOver()
     {
-
-
         roundCountText.SetActive(true);
         youSurvivedText.SetActive(true);
         gameOverText.SetActive(true);
         returnToMenu.SetActive(true);
+        orbCounterText.SetActive(false);
+        newRoundText.SetActive(false);
 
         Debug.Log("Game Over: " + "true");
         isGameActive = false;
@@ -130,58 +149,61 @@ public class GameManager : MonoBehaviour
     public void restartGame()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-        
+
     }
 
 
     public void startGame(int difficulty)
     {
-        //MainCanvas.gameObject.SetActive(false);
-        //playerCanvas.gameObject.SetActive(true);
-        //gameOverText.SetActive(false);
-        //youSurvivedText.SetActive(false);
-        //roundCountText.SetActive(true);
-        //roundCountText.GetComponent<TextMeshPro>().text = "" + roundNumber;
-        //Debug.Log("start game called");
-
+        //switches to necessary canvases and texts
         MainCanvas.gameObject.SetActive(false);
         playerCanvas.gameObject.SetActive(true);
-
-        //Debug.Log("canvas switched");
-        //mainMenu.SetActive(false);
-        //playMenu.SetActive(false);
-        //settingsMenu.SetActive(false);
 
         roundCountText.SetActive(true);
         youSurvivedText.SetActive(false);
         gameOverText.SetActive(false);
         returnToMenu.SetActive(false);
+        orbCounterText.SetActive(true);
+        newRoundText.SetActive(false);
 
 
-        //Debug.Log("texts have successfully switched");
-
-
-
-
+        //adjusts values depending on difficulty
         if (difficulty == 1)
+        {
             Debug.Log("Difficulty: Easy");
+            orbsPerRound = 5;
+        }
         else if (difficulty == 2)
+        {
             Debug.Log("Difficulty: Medium");
+            orbsPerRound = 8;
+        }
         else
+        {
             Debug.Log("Difficulty: Hard");
-
-
-
+            orbsPerRound = 10;
+        }
+        //updates information
+        orbCount = orbsPerRound;
+        updateRoundCount();
         isGameActive = true;
+
         Debug.Log("isGameActive: true");
-        SpawnPillars pillarSpawnScript = spawnManager.GetComponent<SpawnPillars>();
 
+        //gets necessary scripts for starting game
+        //SpawnPillars pillarSpawnScript = spawnManager.GetComponent<SpawnPillars>();
+        //SpawnOrbs spawnOrbsScript = spawnManager.GetComponent<SpawnOrbs>();
+
+        updateOrbCounter();
+
+        //begins new round
+        spawnOrbsScript.newRound(orbsPerRound);
         pillarSpawnScript.setDifficulty(difficulty);
-
         pillarSpawnScript.startRound();
 
-
     }
+
+
 
 
     public void exitGame()
@@ -190,31 +212,81 @@ public class GameManager : MonoBehaviour
     }
 
 
+
+
+
     public void newRound()
     {
-        roundNumber++;
-        roundCountText.GetComponent<TextMeshPro>().text = "" + roundNumber;
+        orbCounterText.SetActive(false);
+        pillarSpawnScript.newRound();
+        if (orbsPerRound < maxOrbsPerRound) orbsPerRound++;
+        orbCount = orbsPerRound;
+        StartCoroutine(betweenRounds());
+        //betweenRounds();
         //call spawnPillar adjustWeights
         //call indicators to adjust wait times
         //adust round text
         //start new round
+
+        //spawnManager.GetComponent<SpawnOrbs>().newRound(orbsPerRound);
 
     }
 
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+    IEnumerator betweenRounds()
+    {
+        isBetweenRound = true;
+
+        updateRoundCount();
+
+        newRoundText.SetActive(true);
+
+        yield return new WaitForSeconds(5);
+
+        newRoundText.SetActive(false);
+
+        yield return new WaitForSeconds(5);
+
+        updateOrbCounter();
+        isBetweenRound = false;
+
+        spawnOrbsScript.newRound(orbsPerRound);
+        orbCounterText.SetActive(true);
+        pillarSpawnScript.startRound();
+
+    }
+
+
+
+
+
+
+
+
+
+
     IEnumerator waitToRestart()
     {
-        Debug.Log("inside waitToRestart");
         float time = 5;
         TextMeshProUGUI textBox = returnToMenu.GetComponent<TMPro.TextMeshProUGUI>();
-        Debug.Log("textBox change: before");
         if (textBox == null) Debug.Log("textBox is null");
         textBox.SetText("Returning to Main Menu:\n\n" + time);
-        //returnToMenu.SetActive(true);
         Debug.Log("textBox change: after");
-
 
         while (time > 0)
         {
@@ -227,6 +299,41 @@ public class GameManager : MonoBehaviour
     }
 
 
+
+
+
+
+
+
+
+    public void orbDestroyed()
+    {
+        orbCount--;
+        updateOrbCounter();
+        if (orbCount <= 0)
+        {
+            newRound();
+        }
+    }
+
+    void updateRoundCount()
+    {
+        roundNumber++;
+        TextMeshProUGUI roundCounter = roundCountText.GetComponent<TMPro.TextMeshProUGUI>();
+        if (roundCounter == null) Debug.Log("round Counter does not exist");
+        roundCounter.SetText("" + roundNumber);
+
+        TextMeshProUGUI newRoundTextBox = newRoundText.GetComponent<TMPro.TextMeshProUGUI>();
+        if (newRoundTextBox == null) Debug.Log("round Counter does not exist");
+        newRoundTextBox.SetText("Round " + roundNumber);
+    }
+
+
+
+    private void updateOrbCounter()
+    {
+        orbCounterText.GetComponent<TextMeshProUGUI>().SetText("Orbs Left: " + orbCount + "/" + orbsPerRound);
+    }
 
 
 

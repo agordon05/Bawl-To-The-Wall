@@ -52,16 +52,20 @@ public class IndicatorBehavior : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        isBetweenRound();
     }
 
     IEnumerator indicatorTimeAwake(int value)
     {
 
         //Debug.Log("inside Activate,     ");
-        isActive = true;
-        icons[value].SetActive(true);
-        playSound(value);
+
+        if (!gameManager.isBetweenRound)
+        {
+            isActive = true;
+            icons[value].SetActive(true);
+            playSound(value);
+        }
         //indicatorTimeAwake();
 
         yield return new WaitForSeconds(timeAwake);
@@ -176,7 +180,17 @@ public class IndicatorBehavior : MonoBehaviour
         }
     }
 
-
+    void isBetweenRound()
+    {
+        if (gameManager.isBetweenRound)
+        {
+            isActive = false;
+            for (int n = 0; n < icons.Length; n++)
+            {
+                icons[n].SetActive(false);
+            }
+        }
+    }
 
 
 
