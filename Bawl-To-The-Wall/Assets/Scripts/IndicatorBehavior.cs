@@ -46,7 +46,7 @@ public class IndicatorBehavior : MonoBehaviour
         isActive = false;
         sound = GetComponent<AudioSource>();
         getStartingWall();
-        if (sound == null) gameObject.GetComponent<AudioSource>();
+        if (sound == null) gameObject.AddComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -165,7 +165,7 @@ public class IndicatorBehavior : MonoBehaviour
     void playSound(int value)
     {
         sound.volume = gameManager.volume;
-        sound.PlayOneShot(soundList[value]);
+        sound.PlayOneShot(soundList[1]);
     }
 
     private void OnTriggerEnter(Collider other)

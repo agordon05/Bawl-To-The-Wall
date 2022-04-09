@@ -16,6 +16,7 @@ TagManager:
   - Music Slider
   - Arena
   - Orb
+  - Controller
   layers:
   - Default
   - TransparentFX

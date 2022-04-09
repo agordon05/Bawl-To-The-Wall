@@ -725,6 +725,7 @@ MonoBehaviour:
   timeAwake: 3
   volumeLevel: 1
   isActive: 0
+  wall: 0
   MainMenuIconMinTime: 3
   MainMenuIconMaxTime: 5
   icons:
@@ -736,14 +737,15 @@ MonoBehaviour:
   - {fileID: 6168016282307467060}
   - {fileID: 6168016283358008161}
   soundList:
-  - {fileID: 8300000, guid: ef7506809e3539d44a20483e1af5ac99, type: 3}
-  - {fileID: 8300000, guid: fa57c107a07945240aa8058254c25db6, type: 3}
+  - {fileID: 8300000, guid: e346a81bd0c2b1645a342fe9b8482fb4, type: 3}
+  - {fileID: 8300000, guid: ff5f85da24bc943d1abdc5760a22bc81, type: 3}
   - {fileID: 8300000, guid: 14609d4558f80784e8213deb1e6c9caf, type: 3}
   - {fileID: 8300000, guid: b5687c5b6e0190d469131aa0044b252b, type: 3}
   - {fileID: 8300000, guid: b8d6ca9c0913fe446bb45138e2a80224, type: 3}
   - {fileID: 8300000, guid: a0e9b5a6b25063d44ada0b80d90ef821, type: 3}
   - {fileID: 8300000, guid: 5efa41faebe12634db9ffad659cb294c, type: 3}
   sound: {fileID: 0}
+  spawnManager: {fileID: 0}
 --- !u!82 &6168016283812414821
 AudioSource:
   m_ObjectHideFlags: 0

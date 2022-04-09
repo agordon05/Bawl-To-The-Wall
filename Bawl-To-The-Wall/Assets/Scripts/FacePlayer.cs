@@ -6,13 +6,16 @@ public class FacePlayer : MonoBehaviour
 {
     private GameObject player;
     private GameManager gameManager;
-
+    public AudioClip orbPickedUp;
+    private AudioSource audioSource;
 
 
 
     // Start is called before the first frame update
     void Start()
     {
+        //audioSource = gameObject.AddComponent<AudioSource>();
+
         gameManager = GameObject.Find("Game Manager").GetComponent<GameManager>();
         player = GameObject.FindGameObjectWithTag("Player");
         if (player == null) Debug.Log("player is null");
@@ -43,10 +46,11 @@ public class FacePlayer : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Player") || other.CompareTag("Controller"))
         {
-            gameManager.orbDestroyed();
-            Destroy(gameObject);
+            //audioSource.PlayOneShot(orbPickedUp);
+            gameManager.orbDestroyed(gameObject);
+            //Destroy(gameObject);
         }
     }
 

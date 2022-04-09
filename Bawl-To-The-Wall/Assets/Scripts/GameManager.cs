@@ -42,11 +42,23 @@ public class GameManager : MonoBehaviour
     private SpawnPillars pillarSpawnScript;
     private SpawnOrbs spawnOrbsScript;
 
+    public AudioClip buttonHoverSound;
+    public AudioClip buttonPressedSound;
+    public AudioClip backButtonPressedSound;
+    public AudioClip roundCompleteSound;
+    public AudioClip orbPickedUp;
+    public List<AudioClip> songList;
+
+    private AudioSource audioSource;
+    private AudioSource musicSource;
+
 
 
     // Start is called before the first frame update
     void Start()
     {
+        audioSource = gameObject.AddComponent<AudioSource>();
+        musicSource = gameObject.AddComponent<AudioSource>();
 
         pillarSpawnScript = spawnManager.GetComponent<SpawnPillars>();
         spawnOrbsScript = spawnManager.GetComponent<SpawnOrbs>();
@@ -73,29 +85,33 @@ public class GameManager : MonoBehaviour
         orbCounterText.SetActive(false);
         newRoundText.SetActive(false);
 
-        startGame(1);
+        //startGame(1);
     }
 
     // Update is called once per frame
-    //void Update()
-    //{
-
-    //}
+    void Update()
+    {
+        //causes massive bug
+        //updateOrbCounter();
+    }
 
     public void playButtonPressed()
     {
+        audioSource.PlayOneShot(buttonPressedSound);
         mainMenu.SetActive(false);
         playMenu.SetActive(true);
     }
 
     public void SettingsButtonPressed()
     {
+        audioSource.PlayOneShot(buttonPressedSound);
         mainMenu.SetActive(false);
         settingsMenu.SetActive(true);
     }
 
     public void BackButtonPressed()
     {
+        audioSource.PlayOneShot(backButtonPressedSound);
         playMenu.SetActive(false);
         settingsMenu.SetActive(false);
         mainMenu.SetActive(true);
@@ -155,6 +171,9 @@ public class GameManager : MonoBehaviour
 
     public void startGame(int difficulty)
     {
+        audioSource.PlayOneShot(buttonPressedSound);
+
+
         //switches to necessary canvases and texts
         MainCanvas.gameObject.SetActive(false);
         playerCanvas.gameObject.SetActive(true);
@@ -184,7 +203,9 @@ public class GameManager : MonoBehaviour
             orbsPerRound = 10;
         }
         //updates information
-        orbCount = orbsPerRound;
+        //orbCount = orbsPerRound;
+
+
         updateRoundCount();
         isGameActive = true;
 
@@ -194,12 +215,16 @@ public class GameManager : MonoBehaviour
         //SpawnPillars pillarSpawnScript = spawnManager.GetComponent<SpawnPillars>();
         //SpawnOrbs spawnOrbsScript = spawnManager.GetComponent<SpawnOrbs>();
 
-        updateOrbCounter();
+        
 
         //begins new round
         spawnOrbsScript.newRound(orbsPerRound);
         pillarSpawnScript.setDifficulty(difficulty);
         pillarSpawnScript.startRound();
+
+
+        updateOrbCounter();
+
 
     }
 
@@ -306,14 +331,14 @@ public class GameManager : MonoBehaviour
 
 
 
-    public void orbDestroyed()
+    public void orbDestroyed(GameObject orbObject)
     {
-        orbCount--;
+        Destroy(orbObject);
+        audioSource.PlayOneShot(orbPickedUp);
+
+        //orbCount--;
         updateOrbCounter();
-        if (orbCount <= 0)
-        {
-            newRound();
-        }
+
     }
 
     void updateRoundCount()
@@ -332,10 +357,36 @@ public class GameManager : MonoBehaviour
 
     private void updateOrbCounter()
     {
+        orbCount = GameObject.FindGameObjectsWithTag("Orb").Length;
+
         orbCounterText.GetComponent<TextMeshProUGUI>().SetText("Orbs Left: " + orbCount + "/" + orbsPerRound);
+        StartCoroutine(orbCounterCheck(orbCount));
+        if (orbCount <= 0)
+        {
+            newRound();
+        }
+
+
     }
 
+    IEnumerator orbCounterCheck(int orbCount)
+    {
+        yield return new WaitForSeconds(1);
 
+        int orbCounterCheck = GameObject.FindGameObjectsWithTag("Orb").Length;
+        if (orbCount != orbCounterCheck)
+        {
+            orbCount = orbCounterCheck;
+            orbCounterText.GetComponent<TextMeshProUGUI>().SetText("Orbs Left: " + orbCount + "/" + orbsPerRound);
+
+            if (orbCount <= 0)
+            {
+                newRound();
+            }
+        }
+
+
+    }
 
 
 

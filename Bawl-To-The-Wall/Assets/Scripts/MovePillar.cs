@@ -14,6 +14,12 @@ public class MovePillar : MonoBehaviour
     public float extendedWaitTime = 5.0f;
     private float timeAwake;
 
+    public AudioClip pillarHittingSound;
+    public AudioClip pillarHittingSound2;
+    public AudioClip pillarHittingSound3;
+    public List<AudioClip> pillarHitSounds;
+
+    private AudioSource audioSource;
 
 
     Rigidbody pillarRb;
@@ -56,6 +62,7 @@ public class MovePillar : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        audioSource = gameObject.AddComponent<AudioSource>();
         pillarRb = GetComponent<Rigidbody>();
         gameManager = GameObject.Find("Game Manager").GetComponent<GameManager>();
         //Debug.Log("pillar Spawned: true");
@@ -199,6 +206,7 @@ public class MovePillar : MonoBehaviour
     //stops pillar from moving and waits for extendedWaitTime Seconds
     IEnumerator waitTime()
     {
+        audioSource.PlayOneShot(pillarHitSounds[1]);
         isMoving = false;
         isMovingForward = false;
         //rbPosConstraint();

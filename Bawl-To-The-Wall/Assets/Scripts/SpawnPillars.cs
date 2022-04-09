@@ -170,7 +170,7 @@ public class SpawnPillars : MonoBehaviour
 
 
         float waitTime = selectedIndicator.GetComponent<IndicatorBehavior>().timeAwake;
-        if(!gameManager.isBetweenRound)
+        if (!gameManager.isBetweenRound)
             StartCoroutine(IndicatorWaitTime(waitTime, selectedIndicator, wallIndex, behavior));
 
     }

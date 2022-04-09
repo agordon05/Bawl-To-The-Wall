@@ -159,6 +159,17 @@ MonoBehaviour:
   isDone: 0
   speed: 300
   extendedWaitTime: 5
+  pillarHittingSound: {fileID: 8300000, guid: b142aa02a8648c94b999212277216d05, type: 3}
+  pillarHittingSound2: {fileID: 8300000, guid: 50e77f85709833045a5e5dc665b403c8, type: 3}
+  pillarHittingSound3: {fileID: 8300000, guid: 7bef0064f8567430cac22499c6b93d4f, type: 3}
+  pillarHitSounds:
+  - {fileID: 8300000, guid: b142aa02a8648c94b999212277216d05, type: 3}
+  - {fileID: 8300000, guid: 50e77f85709833045a5e5dc665b403c8, type: 3}
+  - {fileID: 8300000, guid: 7bef0064f8567430cac22499c6b93d4f, type: 3}
+  - {fileID: 8300000, guid: 7e26c9daf4c32483b9c2790e662d3f1b, type: 3}
+  - {fileID: 8300000, guid: ff5f85da24bc943d1abdc5760a22bc81, type: 3}
+  - {fileID: 8300000, guid: 7bef0064f8567430cac22499c6b93d4f, type: 3}
+  - {fileID: 8300000, guid: 7bef0064f8567430cac22499c6b93d4f, type: 3}
   spawnIndicator: {fileID: 0}
   frontBound: 0
   backBound: 0

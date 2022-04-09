@@ -1079,9 +1079,9 @@
             "id": "d07fcf67-2371-4606-b4c7-acb4ec9c6e36",
             "actions": [
                 {
-                    "name": "Move",
+                    "name": "Thrust",
                     "type": "Button",
-                    "id": "b42ce175-2e53-43e1-929f-649a78fd88e0",
+                    "id": "8903e3ca-662d-4b41-9ab9-f0b55429fdab",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -1100,23 +1100,23 @@
             "bindings": [
                 {
                     "name": "",
-                    "id": "0bb031a1-91bd-4de2-819e-fd0e39fd0a47",
-                    "path": "*/{TriggerButton}",
+                    "id": "cc002d61-921d-46dd-b5ea-2a25a49be544",
+                    "path": "<OculusTouchController>/gripPressed",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Move",
+                    "action": "Grip",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
-                    "id": "cc002d61-921d-46dd-b5ea-2a25a49be544",
-                    "path": "*/{GripButton}",
+                    "id": "15d93c3f-3510-4889-a6e2-bfe8edc453a7",
+                    "path": "<OculusTouchController>/secondaryButton",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Grip",
+                    "action": "Thrust",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
