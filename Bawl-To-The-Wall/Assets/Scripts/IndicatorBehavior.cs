@@ -55,7 +55,7 @@ public class IndicatorBehavior : MonoBehaviour
         isBetweenRound();
     }
 
-    IEnumerator indicatorTimeAwake(int value)
+    IEnumerator indicatorTimeAwake(int behavior)
     {
 
         //Debug.Log("inside Activate,     ");
@@ -63,8 +63,8 @@ public class IndicatorBehavior : MonoBehaviour
         if (!gameManager.isBetweenRound)
         {
             isActive = true;
-            icons[value].SetActive(true);
-            playSound(value);
+            icons[behavior].SetActive(true);
+            playSound(behavior);
         }
         //indicatorTimeAwake();
 
@@ -72,17 +72,17 @@ public class IndicatorBehavior : MonoBehaviour
 
 
         //Debug.Log("deactivating icon");
-        icons[value].SetActive(false);
+        icons[behavior].SetActive(false);
     }
 
 
     //value corresponds to the type of indicator and sound that should be used
-    public void Activate(int value)
+    public void Activate(int behavior)
     {
-        if (value < 0) return;
-        if (value < icons.Length && value < soundList.Length)
+        if (behavior < 0) return;
+        if (behavior < icons.Length && behavior < soundList.Length)
         {
-            StartCoroutine(indicatorTimeAwake(value));
+            StartCoroutine(indicatorTimeAwake(behavior));
         }
     }
 
@@ -162,10 +162,10 @@ public class IndicatorBehavior : MonoBehaviour
     }
 
 
-    void playSound(int value)
+    void playSound(int behavior)
     {
         sound.volume = gameManager.volume;
-        sound.PlayOneShot(soundList[1]);
+        sound.PlayOneShot(soundList[behavior]);
     }
 
     private void OnTriggerEnter(Collider other)
@@ -193,6 +193,11 @@ public class IndicatorBehavior : MonoBehaviour
     }
 
 
+    public void setTimeAwake(float time)
+    {
+        if (time < 1) time = 1;
+        timeAwake = time;
+    }
 
 
 

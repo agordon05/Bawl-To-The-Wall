@@ -203,9 +203,10 @@ public class MovePillar : MonoBehaviour
 
 
 
-    //stops pillar from moving and waits for extendedWaitTime Seconds
+    //stops pillar from moving when fully extended and waits for extendedWaitTime Seconds
     IEnumerator waitTime()
     {
+        audioSource.volume = gameManager.volume;
         audioSource.PlayOneShot(pillarHitSounds[1]);
         isMoving = false;
         isMovingForward = false;
@@ -584,7 +585,7 @@ public class MovePillar : MonoBehaviour
         //Debug.Log(gameObject.tag);
         //if (CompareTag("Pillar"))
         //{
-        Debug.Log(gameObject.name + " triggered: " + other.name);
+        //Debug.Log(gameObject.name + " triggered: " + other.name);
         if (other.CompareTag("Pillar"))
         {
 

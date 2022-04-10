@@ -5015,6 +5015,58 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6168016283812414820, guid: b182d03e7609640318b49bf68dc1c312, type: 3}
   m_PrefabInstance: {fileID: 195181776}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &195558593
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 195558595}
+  - component: {fileID: 195558594}
+  m_Layer: 0
+  m_Name: Music Manager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &195558594
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 195558593}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd2f41e9992c24ce7a6cf8452ff05808, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  songList:
+  - {fileID: 8300000, guid: 956ad2f73332544fd87365087825cc4f, type: 3}
+  - {fileID: 8300000, guid: 5059413ec429c4507bb7bca2286fad19, type: 3}
+  - {fileID: 8300000, guid: d8f7a78a964aa489aafb3749d805cd4b, type: 3}
+  - {fileID: 8300000, guid: 87890a66193394e3cb7d6284cc6b4344, type: 3}
+  - {fileID: 8300000, guid: 26364aaf1f64b40c1a047b0bacfbd10e, type: 3}
+  - {fileID: 8300000, guid: 1555836638cd34283a3780a19b58d4c6, type: 3}
+  - {fileID: 8300000, guid: 5d6e42b338547477aa7a88708f894463, type: 3}
+  - {fileID: 8300000, guid: 07f391589664f4e85904fa28802b4aa8, type: 3}
+--- !u!4 &195558595
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 195558593}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 2059073948}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &212551971
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -35688,16 +35740,7 @@ MonoBehaviour:
   backButtonPressedSound: {fileID: 8300000, guid: 130a177e727814a2ea78a886ab72213d, type: 3}
   roundCompleteSound: {fileID: 8300000, guid: 7478151cf36724a7dada558f746c3633, type: 3}
   orbPickedUp: {fileID: 8300000, guid: ffb159a21c8a04135a5616979c828fab, type: 3}
-  songList:
-  - {fileID: 8300000, guid: 956ad2f73332544fd87365087825cc4f, type: 3}
-  - {fileID: 8300000, guid: 5059413ec429c4507bb7bca2286fad19, type: 3}
-  - {fileID: 8300000, guid: d8f7a78a964aa489aafb3749d805cd4b, type: 3}
-  - {fileID: 8300000, guid: 87890a66193394e3cb7d6284cc6b4344, type: 3}
-  - {fileID: 8300000, guid: 26364aaf1f64b40c1a047b0bacfbd10e, type: 3}
-  - {fileID: 8300000, guid: 1555836638cd34283a3780a19b58d4c6, type: 3}
-  - {fileID: 8300000, guid: 6306498bbea9342a58ad61d5f7128830, type: 3}
-  - {fileID: 8300000, guid: 5d6e42b338547477aa7a88708f894463, type: 3}
-  - {fileID: 8300000, guid: 07f391589664f4e85904fa28802b4aa8, type: 3}
+  musicManager: {fileID: 195558593}
 --- !u!4 &1336647321
 Transform:
   m_ObjectHideFlags: 0
@@ -54193,6 +54236,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 343648414}
+  - {fileID: 195558595}
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
@@ -54624,7 +54668,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &2065468216
 MonoBehaviour:
   m_ObjectHideFlags: 0

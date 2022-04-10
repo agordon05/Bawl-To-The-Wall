@@ -33,9 +33,11 @@ public class GameManager : MonoBehaviour
     public float volume = 1.0f;
     public float musicVolume = 1.0f;
 
-    public int orbCount;
-    public int orbsPerRound = 5;
+    public int orbCount = 0;
+    public int orbsPerRound = 0;
     private int maxOrbsPerRound = 30;
+
+
     public GameObject orbCounterText;
 
 
@@ -47,27 +49,38 @@ public class GameManager : MonoBehaviour
     public AudioClip backButtonPressedSound;
     public AudioClip roundCompleteSound;
     public AudioClip orbPickedUp;
-    public List<AudioClip> songList;
+
+    public GameObject musicManager;
+    private MusicPlayer musicPlayer;
+
 
     private AudioSource audioSource;
-    private AudioSource musicSource;
 
 
 
     // Start is called before the first frame update
     void Start()
     {
-        audioSource = gameObject.AddComponent<AudioSource>();
-        musicSource = gameObject.AddComponent<AudioSource>();
+        //DontDestroyOnLoad(GameObject.FindGameObjectWithTag("Player"));
+
 
         pillarSpawnScript = spawnManager.GetComponent<SpawnPillars>();
         spawnOrbsScript = spawnManager.GetComponent<SpawnOrbs>();
+        musicPlayer = musicManager.GetComponent<MusicPlayer>();
+        audioSource = gameObject.AddComponent<AudioSource>();
 
-        Debug.Log("Round: " + roundNumber);
+        //sets music volume at start
+        if (musicPlayer != null)
+        {
+            musicPlayer.setVolume(musicVolume);
+        }
+
+
+        //Debug.Log("Round: " + roundNumber);
         isGameActive = false;
         isGameOver = false;
         isBetweenRound = false;
-        Debug.Log("Game Over: " + "false");
+        //Debug.Log("Game Over: " + "false");
 
 
         MainCanvas.gameObject.SetActive(true);
@@ -85,12 +98,29 @@ public class GameManager : MonoBehaviour
         orbCounterText.SetActive(false);
         newRoundText.SetActive(false);
 
-        //startGame(1);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        //startGame(2);
     }
 
     // Update is called once per frame
     void Update()
     {
+        Debug.Log("Orbs in play: " + GameObject.FindGameObjectsWithTag("Orb").Length);
+        if (orbCount != GameObject.FindGameObjectsWithTag("Orb").Length) updateOrbCounter();
+
         //causes massive bug
         //updateOrbCounter();
     }
@@ -123,6 +153,7 @@ public class GameManager : MonoBehaviour
         if (volumeLevel < 0) volumeLevel = 0;
         else if (volumeLevel > 1) volumeLevel = 1;
         volume = volumeLevel;
+        audioSource.volume = volume;
     }
     public void setMusicVolume(float volumeLevel)
     {
@@ -130,6 +161,7 @@ public class GameManager : MonoBehaviour
         if (volumeLevel < 0) volumeLevel = 0;
         else if (volumeLevel > 1) volumeLevel = 1;
         musicVolume = volumeLevel;
+        musicPlayer.setVolume(musicVolume);
     }
 
 
@@ -151,7 +183,7 @@ public class GameManager : MonoBehaviour
         orbCounterText.SetActive(false);
         newRoundText.SetActive(false);
 
-        Debug.Log("Game Over: " + "true");
+        //Debug.Log("Game Over: " + "true");
         isGameActive = false;
         isGameOver = true;
         youSurvivedText.GetComponent<TextMeshProUGUI>().text = "You Survived " + roundNumber + " Rounds";
@@ -189,18 +221,18 @@ public class GameManager : MonoBehaviour
         //adjusts values depending on difficulty
         if (difficulty == 1)
         {
-            Debug.Log("Difficulty: Easy");
-            orbsPerRound = 5;
+            //Debug.Log("Difficulty: Easy");
+            orbsPerRound = 1;
         }
         else if (difficulty == 2)
         {
-            Debug.Log("Difficulty: Medium");
-            orbsPerRound = 8;
+            //Debug.Log("Difficulty: Medium");
+            orbsPerRound = 3;
         }
         else
         {
-            Debug.Log("Difficulty: Hard");
-            orbsPerRound = 10;
+            //Debug.Log("Difficulty: Hard");
+            orbsPerRound = 5;
         }
         //updates information
         //orbCount = orbsPerRound;
@@ -215,13 +247,13 @@ public class GameManager : MonoBehaviour
         //SpawnPillars pillarSpawnScript = spawnManager.GetComponent<SpawnPillars>();
         //SpawnOrbs spawnOrbsScript = spawnManager.GetComponent<SpawnOrbs>();
 
-        
+
 
         //begins new round
         spawnOrbsScript.newRound(orbsPerRound);
         pillarSpawnScript.setDifficulty(difficulty);
         pillarSpawnScript.startRound();
-
+        if (GameObject.FindGameObjectsWithTag("Orb").Length == 0) Debug.Log("Orbs have either not spawned or findgameobjects does not find objects set unactive");
 
         updateOrbCounter();
 
@@ -245,7 +277,7 @@ public class GameManager : MonoBehaviour
         orbCounterText.SetActive(false);
         pillarSpawnScript.newRound();
         if (orbsPerRound < maxOrbsPerRound) orbsPerRound++;
-        orbCount = orbsPerRound;
+        //orbCount = orbsPerRound;
         StartCoroutine(betweenRounds());
         //betweenRounds();
         //call spawnPillar adjustWeights
@@ -287,13 +319,15 @@ public class GameManager : MonoBehaviour
 
         yield return new WaitForSeconds(5);
 
-        updateOrbCounter();
-        isBetweenRound = false;
+        
+        
 
         spawnOrbsScript.newRound(orbsPerRound);
+
+        updateOrbCounter();
         orbCounterText.SetActive(true);
         pillarSpawnScript.startRound();
-
+        isBetweenRound = false;
     }
 
 
@@ -311,11 +345,11 @@ public class GameManager : MonoBehaviour
         TextMeshProUGUI textBox = returnToMenu.GetComponent<TMPro.TextMeshProUGUI>();
         if (textBox == null) Debug.Log("textBox is null");
         textBox.SetText("Returning to Main Menu:\n\n" + time);
-        Debug.Log("textBox change: after");
+        //Debug.Log("textBox change: after");
 
         while (time > 0)
         {
-            Debug.Log("Return To Menu: " + time);
+            //Debug.Log("Return To Menu: " + time);
             yield return new WaitForSeconds(1);
             time--;
             textBox.SetText("Returning to Main Menu:\n\n" + time);
@@ -336,7 +370,6 @@ public class GameManager : MonoBehaviour
         Destroy(orbObject);
         audioSource.PlayOneShot(orbPickedUp);
 
-        //orbCount--;
         updateOrbCounter();
 
     }
@@ -357,14 +390,22 @@ public class GameManager : MonoBehaviour
 
     private void updateOrbCounter()
     {
-        orbCount = GameObject.FindGameObjectsWithTag("Orb").Length;
+        GameObject[] currentOrbs = GameObject.FindGameObjectsWithTag("Orb");
+        orbCount = currentOrbs.Length;
 
         orbCounterText.GetComponent<TextMeshProUGUI>().SetText("Orbs Left: " + orbCount + "/" + orbsPerRound);
-        StartCoroutine(orbCounterCheck(orbCount));
-        if (orbCount <= 0)
+        //StartCoroutine(orbCounterCheck(orbCount));
+        if (orbCount > orbsPerRound)
+        {
+            spawnOrbsScript.newRound(orbsPerRound);
+            for (int index = 0; index < currentOrbs.Length; index++) Destroy(currentOrbs[index]);
+            updateOrbCounter();
+        }
+        else if (orbCount <= 0)
         {
             newRound();
         }
+
 
 
     }
@@ -376,6 +417,7 @@ public class GameManager : MonoBehaviour
         int orbCounterCheck = GameObject.FindGameObjectsWithTag("Orb").Length;
         if (orbCount != orbCounterCheck)
         {
+
             orbCount = orbCounterCheck;
             orbCounterText.GetComponent<TextMeshProUGUI>().SetText("Orbs Left: " + orbCount + "/" + orbsPerRound);
 

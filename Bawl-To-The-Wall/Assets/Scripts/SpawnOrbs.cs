@@ -5,6 +5,7 @@ using UnityEngine;
 public class SpawnOrbs : MonoBehaviour
 {
     public GameObject Orb;
+    private GameManager gameManager;
 
     private int xBound = 170; //(-170, 170)
     private int yLowerBound = 20; //(20,340)
@@ -12,10 +13,10 @@ public class SpawnOrbs : MonoBehaviour
     private int zBound = 170; //(-170,170)
 
     //// Start is called before the first frame update
-    //void Start()
-    //{
-
-    //}
+    void Start()
+    {
+        gameManager = GameObject.Find("Game Manager").GetComponent<GameManager>();
+    }
 
     //// Update is called once per frame
     //void Update()
@@ -30,9 +31,23 @@ public class SpawnOrbs : MonoBehaviour
             Vector3 spawnPos = randomSpawnPos();
 
             Instantiate(Orb, spawnPos, Orb.transform.rotation);
-
         }
+        //spawnCountCheck();
     }
+
+
+    //public void spawnCountCheck()
+    //{
+    //    if(GameObject.FindGameObjectsWithTag("Orb").Length > gameManager.orbsPerRound)
+    //    {
+    //        GameObject[] orbs = GameObject.FindGameObjectsWithTag("Orb");
+    //        for (int index = 0; index < orbs.Length; index++) Destroy(orbs[index]);
+    //        newRound(gameManager.orbsPerRound);
+    //    }
+    //}
+
+
+
 
     Vector3 randomSpawnPos()
     {

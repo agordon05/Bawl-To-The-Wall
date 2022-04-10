@@ -39,11 +39,12 @@ public class SpawnPillars : MonoBehaviour
     public float spawnOffset = 150;
 
     public float repeatSpawnTime = 10.0f;
+    public float indicatorWaitTime = 3;
 
     private int[] weights = { 0, 0, 0, 0, 0, 0, 0 };
 
-
-
+    /****TEMPORARY****/
+    private bool[] finishedSpawnTypes = { false, true, false, false, false, false, false };
 
 
     // Start is called before the first frame update
@@ -77,7 +78,20 @@ public class SpawnPillars : MonoBehaviour
         {
             int behavior = GetRandBehavior();
 
-            behavior = 0;
+            //behavior = 1;
+
+            /****TEMPORARY****/
+            while (!finishedSpawnTypes[behavior])
+            {
+                behavior--;
+                if (behavior < 0)
+                {
+                    behavior = 0;
+                    break;
+                }
+            }
+
+
 
             switch (behavior)
             {
@@ -165,9 +179,9 @@ public class SpawnPillars : MonoBehaviour
         //}
 
 
-
         if (selectedIndicator == null) return;
 
+        selectedIndicator.GetComponent<IndicatorBehavior>().setTimeAwake(indicatorWaitTime);
 
         float waitTime = selectedIndicator.GetComponent<IndicatorBehavior>().timeAwake;
         if (!gameManager.isBetweenRound)
@@ -180,8 +194,119 @@ public class SpawnPillars : MonoBehaviour
     //spawns an entire row of pillars
     void RowSpawn(int behavior)
     {
+        //selects wall for spawn
+        int wallIndex = (int)Random.Range(0, Walls.Length);
+        GameObject wall = Walls[wallIndex];
 
+
+        //gets all indicators involved
+        List<GameObject> indicatorList = GetIndicators(wall);
+        GameObject wallIndicators = null;
+
+        //gets empty object inside of wall with the wall indicator tag
+        for (int index = 0; index < wall.transform.childCount; index++)
+        {
+            if (wall.transform.GetChild(index).CompareTag("Wall Indicator"))
+            {
+                //Debug.Log("child is Wall Indicator");
+                wallIndicators = wall.transform.GetChild(index).gameObject;
+            }
+        }
+
+
+        if (wallIndicators == null)
+        {
+            Debug.Log("no object had Wall Indicator tag");
+            return;
+        }
+
+        indicatorList = GetIndicatorRows(wallIndicators);
+        indicatorList = GetRowsInRange(indicatorList, wallIndex);
+
+        int randomIndex = (int)Random.Range(0, indicatorList.Count);
+        Debug.Log("rows in Range Count: " + indicatorList.Count);
+        indicatorList = GetGameObjectList(indicatorList[randomIndex], "Indicator");
+
+
+        //spawns pillars
+
+
+        for (int index = 0; index < indicatorList.Count; index++)
+        {
+            IndicatorBehavior indicatorScript = indicatorList[index].GetComponent<IndicatorBehavior>();
+            indicatorScript.setTimeAwake(indicatorWaitTime);
+            float waitTime = indicatorScript.timeAwake;
+            if (!gameManager.isBetweenRound && !indicatorScript.isActive)
+                StartCoroutine(IndicatorWaitTime(waitTime, indicatorList[index], wallIndex, behavior));
+
+        }
     }
+
+
+    List<GameObject> GetRowsInRange(List<GameObject> rows, int wallIndex)
+    {
+        List<GameObject> validRows = new List<GameObject>();
+
+        //player's position
+        float playerPosX = player.transform.position.x;
+        float playerPosY = player.transform.position.y;
+        //float playerPosZ = player.transform.position.z;
+
+
+        for (int index = 0; index < rows.Count; index++)
+        {
+            //finds the indicator's distance from player
+            float xDistFromPlayer = Mathf.Abs(playerPosX - rows[index].transform.position.x);
+            float yDistFromPlayer = Mathf.Abs(playerPosY - rows[index].transform.position.y);
+            //float zDistFromPlayer = Mathf.Abs(playerPosZ - rows[index].transform.position.z);
+
+
+            //plane axis': X & Z (Floor & Ceiling)
+            if (wallIndex == 0 || wallIndex == 1)
+            {
+
+
+                //if the indicator is within range of the player i.e. less than the pillarOffset
+                if (xDistFromPlayer < PillarOffset /*&& zDistFromPlayer < PillarOffset*/)
+                {
+                    //Debug.Log("Pillar is within range");
+                    validRows.Add(rows[index]);
+                }
+            }
+            //plane axis': Y & Z (Front & Back)
+            else if (wallIndex == 2 || wallIndex == 3)
+            {
+
+
+                //if the indicator is within range of the player i.e. less than the pillarOffset
+                if (yDistFromPlayer < PillarOffset /*&& zDistFromPlayer < PillarOffset*/)
+                {
+                    //Debug.Log("Pillar is within range");
+                    validRows.Add(rows[index]);
+                }
+            }
+            //plane axis': X & Y (Left & Right)
+            else
+            {
+
+
+                //if the indicator is within range of the player i.e. less than the pillarOffset
+                if (/*xDistFromPlayer < PillarOffset && */ yDistFromPlayer < PillarOffset)
+                {
+                    //Debug.Log("Pillar is within range");
+                    validRows.Add(rows[index]);
+                }
+            }
+        }
+
+        return validRows;
+    }
+
+
+
+
+
+
 
 
     //behavior = 2
@@ -193,14 +318,14 @@ public class SpawnPillars : MonoBehaviour
 
 
     //behavior = 3
-    //spawns a  pillars every wall that converge to a single point
+    //spawns all pillars within range from every wall that converge to a single point
     void PointSpawn(int behaviour)
     {
 
     }
 
     //behavior = 4
-    //spawns a bunch of pillars from a single wall
+    //spawns a bunch of pillars ignoring whether or not they're within range from a single wall
     void MassPoint(int behavior)
     {
 
@@ -235,7 +360,7 @@ public class SpawnPillars : MonoBehaviour
         SelectedIndicator.GetComponent<IndicatorBehavior>().Activate(behavior);
 
         //Selects random Pillar position from selection
-        Vector3 randPillarPos = SelectedIndicator.transform.position;
+        Vector3 indicatorPos = SelectedIndicator.transform.position;
 
         //gathers neccesary information in order to spawn pillar
         Vector3 rotation = GetPillarRotation(wallIndex);
@@ -245,7 +370,7 @@ public class SpawnPillars : MonoBehaviour
         if (gameManager.isGameActive && !gameManager.isGameOver && !gameManager.isBetweenRound)
         {
             //spawns pillar
-            GameObject Pillar = Instantiate(pillar, GetSpawnPos(randPillarPos, wallIndex), Quaternion.Euler(rotation));
+            GameObject Pillar = Instantiate(pillar, GetSpawnPos(indicatorPos, wallIndex), Quaternion.Euler(rotation));
 
             pillar.GetComponent<MovePillar>().SpawnIndicator(SelectedIndicator);
         }
@@ -406,6 +531,11 @@ public class SpawnPillars : MonoBehaviour
         return rows;
     }
 
+
+
+
+
+
     //creates a list of all the indicators inside of wall
     List<GameObject> GetIndicatorList(List<GameObject> indicatorRows)
     {
@@ -421,6 +551,11 @@ public class SpawnPillars : MonoBehaviour
         }
         return indicators;
     }
+
+
+
+
+
 
 
 
@@ -459,6 +594,17 @@ public class SpawnPillars : MonoBehaviour
     }
 
 
+
+
+
+
+
+
+
+
+
+
+
     //makes sure not all indicators are being used
     bool AllIndicatorsActive(List<GameObject> list)
     {
@@ -470,6 +616,14 @@ public class SpawnPillars : MonoBehaviour
 
         return true;
     }
+
+
+
+
+
+
+
+
 
 
 
@@ -604,8 +758,6 @@ public class SpawnPillars : MonoBehaviour
                         weights[5] += 1;
                         weights[6] += 1;
                     }
-                    weightsCheck();
-
                 }
                 break;
             //medium: uses default, quick, point, slow spawn types
@@ -635,7 +787,6 @@ public class SpawnPillars : MonoBehaviour
                         weights[5] += 1;
                         weights[6] += 1;
                     }
-                    weightsCheck();
                 }
                 break;
             //hard: uses default, row, quick, point, Mass, adjacent, slow spawn types
@@ -668,10 +819,10 @@ public class SpawnPillars : MonoBehaviour
                         weights[4] += 1;
                         weights[5] += 1;
                     }
-                    weightsCheck();
                 }
                 break;
         }
+        weightsCheck();
     }
 
 
@@ -703,7 +854,11 @@ public class SpawnPillars : MonoBehaviour
             case 2:
                 {
                     weights[0] = 100;
-                    weights[6] = 100;
+                    /****TEMPORARY****/
+                    //weights[6] = 100;
+                    weights[1] = 100;
+
+
                 }
                 break;
             case 3:
@@ -718,6 +873,10 @@ public class SpawnPillars : MonoBehaviour
         weightsCheck();
     }
 
+    void adjustIndicatorTime()
+    {
+        if (indicatorWaitTime > 1.5f) indicatorWaitTime -= 0.02f;
+    }
 
 
 
@@ -736,6 +895,27 @@ public class SpawnPillars : MonoBehaviour
     public void setDifficulty(int difficulty)
     {
         this.difficulty = difficulty;
+
+
+        if (difficulty == 1)
+        {
+            repeatSpawnTime = 12;
+            indicatorWaitTime = 4;
+        }
+        if (difficulty == 2)
+        {
+            repeatSpawnTime = 10;
+            indicatorWaitTime = 3.5f;
+
+        }
+        if (difficulty == 3)
+        {
+            repeatSpawnTime = 8;
+            indicatorWaitTime = 3;
+
+        }
+
+
         setWeights();
     }
 
