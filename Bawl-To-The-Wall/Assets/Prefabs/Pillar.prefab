@@ -42,8 +42,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 29.569649, y: 2.212892, z: 29.782982}
-  m_Center: {x: 2.4485207, y: -1.4727967, z: 1.8890266}
+  m_Size: {x: 29.569649, y: 12.208357, z: 30.095634}
+  m_Center: {x: 2.4485207, y: -6.4705267, z: 1.7327003}
 --- !u!1 &3516011713532215528
 GameObject:
   m_ObjectHideFlags: 0
@@ -154,10 +154,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 086a8d8d535a14dfbbbfbb9cd9ca0014, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  sensor: {fileID: 2101039305742282539}
   isMoving: 0
   isMovingForward: 0
   isDone: 0
-  speed: 300
+  speed: 400
   extendedWaitTime: 5
   pillarHittingSound: {fileID: 8300000, guid: b142aa02a8648c94b999212277216d05, type: 3}
   pillarHittingSound2: {fileID: 8300000, guid: 50e77f85709833045a5e5dc665b403c8, type: 3}
@@ -170,6 +171,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: ff5f85da24bc943d1abdc5760a22bc81, type: 3}
   - {fileID: 8300000, guid: 7bef0064f8567430cac22499c6b93d4f, type: 3}
   - {fileID: 8300000, guid: 7bef0064f8567430cac22499c6b93d4f, type: 3}
+  explosionParticles: {fileID: 19886120, guid: 5702e2a6fea804b45b49b70d8feaf7ae, type: 3}
   spawnIndicator: {fileID: 0}
   frontBound: 0
   backBound: 0

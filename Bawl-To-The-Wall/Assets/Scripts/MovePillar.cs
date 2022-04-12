@@ -5,6 +5,7 @@ using UnityEngine;
 public class MovePillar : MonoBehaviour
 {
     private GameManager gameManager;
+    public GameObject sensor;
 
     public bool isMoving;
     public bool isMovingForward;
@@ -19,10 +20,14 @@ public class MovePillar : MonoBehaviour
     public AudioClip pillarHittingSound3;
     public List<AudioClip> pillarHitSounds;
 
+
+    public ParticleSystem explosionParticles;
+
+
     private AudioSource audioSource;
 
 
-    Rigidbody pillarRb;
+    //Rigidbody pillarRb;
 
 
     //is given after instantiating from Spawn Pillar
@@ -63,7 +68,7 @@ public class MovePillar : MonoBehaviour
     void Start()
     {
         audioSource = gameObject.AddComponent<AudioSource>();
-        pillarRb = GetComponent<Rigidbody>();
+        //pillarRb = GetComponent<Rigidbody>();
         gameManager = GameObject.Find("Game Manager").GetComponent<GameManager>();
         //Debug.Log("pillar Spawned: true");
         getStartingWall();
@@ -111,95 +116,6 @@ public class MovePillar : MonoBehaviour
 
 
 
-    void rbPosConstraint()
-    {
-        switch (startingWall)
-        {
-            //defualt is the ceiling
-            default:
-                {
-
-                    Vector3 posCorrection = new Vector3(spawnPos.x - transform.position.x, 0, spawnPos.z - transform.position.z);
-                    transform.Translate(posCorrection);
-
-                    //Vector3 localVelocity = transform.InverseTransformDirection(pillarRb.velocity);
-                    //localVelocity.x = 0;
-                    //localVelocity.z = 0;
-
-                    //pillarRb.velocity = transform.TransformDirection(localVelocity);
-                }
-                break;
-            //floor
-            case 1:
-                {
-                    Vector3 posCorrection = new Vector3(spawnPos.x - transform.position.x, 0, spawnPos.z - transform.position.z);
-                    transform.Translate(posCorrection);
-
-                    //Vector3 localVelocity = transform.InverseTransformDirection(pillarRb.velocity);
-                    //localVelocity.x = 0;
-                    //localVelocity.z = 0;
-
-                    //pillarRb.velocity = transform.TransformDirection(localVelocity);
-                }
-                break;
-            //front
-            case 2:
-                {
-                    Vector3 posCorrection = new Vector3(spawnPos.x - transform.position.x, spawnPos.y - transform.position.y, 0);
-                    transform.Translate(posCorrection);
-
-
-                    //Vector3 localVelocity = transform.InverseTransformDirection(pillarRb.velocity);
-                    //localVelocity.x = 0;
-                    //localVelocity.y = 0;
-
-                    //pillarRb.velocity = transform.TransformDirection(localVelocity);
-                }
-                break;
-            //back
-            case 3:
-                {
-                    Vector3 posCorrection = new Vector3(spawnPos.x - transform.position.x, spawnPos.y - transform.position.y, 0);
-                    transform.Translate(posCorrection);
-
-                    //Vector3 localVelocity = transform.InverseTransformDirection(pillarRb.velocity);
-                    //localVelocity.x = 0;
-                    //localVelocity.y = 0;
-
-                    //pillarRb.velocity = transform.TransformDirection(localVelocity);
-                }
-                break;
-            //left
-            case 4:
-                {
-
-                    Vector3 posCorrection = new Vector3(0, -spawnPos.y + transform.position.y, -spawnPos.z + transform.position.z);
-                    transform.Translate(posCorrection);
-
-                    //Vector3 localVelocity = transform.InverseTransformDirection(pillarRb.velocity);
-                    //localVelocity.y = 0;
-                    //localVelocity.z = 0;
-
-                    //pillarRb.velocity = transform.TransformDirection(localVelocity);
-                }
-                break;
-            //right
-            case 5:
-                {
-
-                    Vector3 posCorrection = new Vector3(0, -spawnPos.y + transform.position.y, -spawnPos.z + transform.position.z);
-                    transform.Translate(posCorrection);
-
-                    //Vector3 localVelocity = transform.InverseTransformDirection(pillarRb.velocity);
-                    //localVelocity.y = 0;
-                    //localVelocity.z = 0;
-
-                    //pillarRb.velocity = transform.TransformDirection(localVelocity);
-                }
-                break;
-        }
-    }
-
 
 
 
@@ -208,6 +124,7 @@ public class MovePillar : MonoBehaviour
     {
         audioSource.volume = gameManager.volume;
         audioSource.PlayOneShot(pillarHitSounds[1]);
+        Instantiate(explosionParticles, sensor.transform.position, Quaternion.Euler(0, 0, 0));
         isMoving = false;
         isMovingForward = false;
         //rbPosConstraint();
@@ -544,6 +461,13 @@ public class MovePillar : MonoBehaviour
 
 
 
+    public void recall()
+    {
+        timeAwake = 10;
+    }
+
+
+
 
     public void SpawnIndicator(GameObject indicator)
     {
@@ -574,22 +498,19 @@ public class MovePillar : MonoBehaviour
         Destroy(gameObject);
     }
 
-
+    bool isColliding = false;
 
     private void OnTriggerEnter(Collider other)
     {
-        //Debug.Log("Inside on trigger enter");
-        //Debug.Log(other.tag);
-        //Debug.Log(other.gameObject.tag);
-        //Debug.Log(tag);
-        //Debug.Log(gameObject.tag);
-        //if (CompareTag("Pillar"))
-        //{
-        //Debug.Log(gameObject.name + " triggered: " + other.name);
+
+        if (other.gameObject == spawnIndicator || other.CompareTag("Boundary") || isColliding) return;
+
         if (other.CompareTag("Pillar"))
         {
-
+            //Vector3 sensorPos =
             //Debug.Log("hit Pillar");
+
+            isColliding = true;
             MovePillar otherPillarScript = other.gameObject.GetComponent<MovePillar>();
             if (otherPillarScript == null) Debug.Log("pillar does not have a script");
             if (otherPillarScript.isMovingForward == true)
@@ -605,6 +526,9 @@ public class MovePillar : MonoBehaviour
 
         else if (other.CompareTag("Player") && isMovingForward)
         {
+            Instantiate(explosionParticles, sensor.transform.position, Quaternion.Euler(0, 0, 0));
+
+            isColliding = true;
             Debug.Log("Player was hit");
             //StartCoroutine(waitTime());
             gameManager.gameOver();
@@ -612,11 +536,17 @@ public class MovePillar : MonoBehaviour
         }
         else if (other.CompareTag("Chicken"))
         {
+            Instantiate(explosionParticles, sensor.transform.position, Quaternion.Euler(0, 0, 0));
+
+            isColliding = true;
             Debug.Log("Chicken was hit");
 
         }
 
     }
+
+
+
 
 
 }

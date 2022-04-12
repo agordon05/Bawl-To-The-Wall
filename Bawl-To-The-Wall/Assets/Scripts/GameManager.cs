@@ -61,7 +61,6 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        //DontDestroyOnLoad(GameObject.FindGameObjectWithTag("Player"));
 
 
         pillarSpawnScript = spawnManager.GetComponent<SpawnPillars>();
@@ -98,21 +97,7 @@ public class GameManager : MonoBehaviour
         orbCounterText.SetActive(false);
         newRoundText.SetActive(false);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        //startGame(2);
+        //startGame(3);
     }
 
     // Update is called once per frame
@@ -121,9 +106,23 @@ public class GameManager : MonoBehaviour
         Debug.Log("Orbs in play: " + GameObject.FindGameObjectsWithTag("Orb").Length);
         if (orbCount != GameObject.FindGameObjectsWithTag("Orb").Length) updateOrbCounter();
 
-        //causes massive bug
+        GameObject[] particleList = GameObject.FindGameObjectsWithTag("Particles");
+        for (int index = 0; index < particleList.Length; index++)
+        {
+            ParticleSystem particle = particleList[index].GetComponent<ParticleSystem>();
+            if (particle.particleCount == 0 && !particle.isEmitting) Destroy(particleList[index]);
+        }
+
+        //causes massively fun bug
         //updateOrbCounter();
     }
+
+
+
+
+
+
+
 
     public void playButtonPressed()
     {
@@ -234,20 +233,11 @@ public class GameManager : MonoBehaviour
             //Debug.Log("Difficulty: Hard");
             orbsPerRound = 5;
         }
-        //updates information
-        //orbCount = orbsPerRound;
-
 
         updateRoundCount();
         isGameActive = true;
 
         Debug.Log("isGameActive: true");
-
-        //gets necessary scripts for starting game
-        //SpawnPillars pillarSpawnScript = spawnManager.GetComponent<SpawnPillars>();
-        //SpawnOrbs spawnOrbsScript = spawnManager.GetComponent<SpawnOrbs>();
-
-
 
         //begins new round
         spawnOrbsScript.newRound(orbsPerRound);
@@ -261,8 +251,6 @@ public class GameManager : MonoBehaviour
     }
 
 
-
-
     public void exitGame()
     {
         Application.Quit(0);
@@ -272,38 +260,23 @@ public class GameManager : MonoBehaviour
 
 
 
+
+
+
+
+
+
     public void newRound()
     {
-        orbCounterText.SetActive(false);
-        pillarSpawnScript.newRound();
-        if (orbsPerRound < maxOrbsPerRound) orbsPerRound++;
-        //orbCount = orbsPerRound;
-        StartCoroutine(betweenRounds());
-        //betweenRounds();
-        //call spawnPillar adjustWeights
-        //call indicators to adjust wait times
-        //adust round text
-        //start new round
-
-        //spawnManager.GetComponent<SpawnOrbs>().newRound(orbsPerRound);
+        if (isGameOver == false)
+        {
+            orbCounterText.SetActive(false);
+            pillarSpawnScript.newRound();
+            if (orbsPerRound < maxOrbsPerRound) orbsPerRound++;
+            StartCoroutine(betweenRounds());
+        }
 
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     IEnumerator betweenRounds()
     {
@@ -319,8 +292,8 @@ public class GameManager : MonoBehaviour
 
         yield return new WaitForSeconds(5);
 
-        
-        
+
+
 
         spawnOrbsScript.newRound(orbsPerRound);
 
@@ -329,14 +302,6 @@ public class GameManager : MonoBehaviour
         pillarSpawnScript.startRound();
         isBetweenRound = false;
     }
-
-
-
-
-
-
-
-
 
 
     IEnumerator waitToRestart()
@@ -409,27 +374,5 @@ public class GameManager : MonoBehaviour
 
 
     }
-
-    IEnumerator orbCounterCheck(int orbCount)
-    {
-        yield return new WaitForSeconds(1);
-
-        int orbCounterCheck = GameObject.FindGameObjectsWithTag("Orb").Length;
-        if (orbCount != orbCounterCheck)
-        {
-
-            orbCount = orbCounterCheck;
-            orbCounterText.GetComponent<TextMeshProUGUI>().SetText("Orbs Left: " + orbCount + "/" + orbsPerRound);
-
-            if (orbCount <= 0)
-            {
-                newRound();
-            }
-        }
-
-
-    }
-
-
 
 }

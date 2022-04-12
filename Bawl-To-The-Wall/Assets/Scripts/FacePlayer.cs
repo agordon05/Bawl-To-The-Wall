@@ -57,20 +57,5 @@ public class FacePlayer : MonoBehaviour
 
 
 
-    //temporary
-    //float time;
-    //void OnTime()
-    //{
-    //    if(time > 10)
-    //    {
-    //        gameManager.orbDestroyed();
-    //        Destroy(gameObject);
-    //        Debug.Log("object not destroyed");
-    //    }
-    //}
-
-
-
-
 
 }

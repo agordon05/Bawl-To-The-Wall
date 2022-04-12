@@ -3,7 +3,6 @@ ScriptsOnlyBuild:
     Assembly-CSharp.dll:
     - BackButton
     - ContinuousMovement
-    - DebugDisplay
     - DifficultyButton
     - ExitButton
     - FacePlayer
@@ -71,7 +70,6 @@ ScriptsOnlyBuild:
     - UnityEngine.UI.GraphicRaycaster
     - UnityEngine.UI.Image
     - UnityEngine.UI.Slider
-    - UnityEngine.UI.Text
   sceneClasses:
     Assets/Scenes/Arena 1.unity:
     - Class: 1
@@ -135,8 +133,6 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 2354}
     - Class: 114
-      Script: {instanceID: 2362}
-    - Class: 114
       Script: {instanceID: 2636}
     - Class: 114
       Script: {instanceID: 2642}
@@ -185,8 +181,6 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 5054}
     - Class: 114
-      Script: {instanceID: 5184}
-    - Class: 114
       Script: {instanceID: 5188}
     - Class: 114
       Script: {instanceID: 5220}
@@ -223,6 +217,10 @@ ScriptsOnlyBuild:
     - Class: 157
       Script: {instanceID: 0}
     - Class: 196
+      Script: {instanceID: 0}
+    - Class: 198
+      Script: {instanceID: 0}
+    - Class: 199
       Script: {instanceID: 0}
     - Class: 212
       Script: {instanceID: 0}
@@ -531,7 +529,7 @@ ScriptsOnlyBuild:
     className: TextMeshProUGUI
   - hash:
       serializedVersion: 2
-      Hash: 7e9917b8ff9e4f1733b36e7171504fef
+      Hash: 72fcacd63f00c3b3e69ee8af574c2338
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: PlayerControls
@@ -1023,19 +1021,13 @@ ScriptsOnlyBuild:
     className: SwingArmModel
   - hash:
       serializedVersion: 2
-      Hash: b1b30577e44e211f4e73ab9f0062f39a
-    assemblyName: Assembly-CSharp.dll
-    namespaceName: 
-    className: DebugDisplay
-  - hash:
-      serializedVersion: 2
       Hash: 8efe7e1208161b145fd1b63bb1207a01
     assemblyName: Unity.XR.Interaction.Toolkit.dll
     namespaceName: UnityEngine.XR.Interaction.Toolkit
     className: DeviceBasedContinuousMoveProvider
   - hash:
       serializedVersion: 2
-      Hash: 91d2e84a3bd312d2e39275380302ab91
+      Hash: 48c211a98df4490548c18e15bf685346
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: MovePillar

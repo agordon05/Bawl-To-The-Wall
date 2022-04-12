@@ -38,13 +38,13 @@ public class SpawnPillars : MonoBehaviour
     //transform of opposite wall - where the pillar transform is when fully extended
     public float spawnOffset = 150;
 
-    public float repeatSpawnTime = 10.0f;
+    public float repeatSpawnTime = 5.0f;
     public float indicatorWaitTime = 3;
 
     private int[] weights = { 0, 0, 0, 0, 0, 0, 0 };
 
     /****TEMPORARY****/
-    private bool[] finishedSpawnTypes = { false, true, false, false, false, false, false };
+    private bool[] finishedSpawnTypes = { true, true, true, true, true, false, true };
 
 
     // Start is called before the first frame update
@@ -78,7 +78,8 @@ public class SpawnPillars : MonoBehaviour
         {
             int behavior = GetRandBehavior();
 
-            //behavior = 1;
+            //if(behavior != 0)
+            //    behavior = 3;
 
             /****TEMPORARY****/
             while (!finishedSpawnTypes[behavior])
@@ -91,13 +92,14 @@ public class SpawnPillars : MonoBehaviour
                 }
             }
 
-
+            //behavior = 4;
 
             switch (behavior)
             {
                 default:
                     {
-                        defaultSpawn(0);
+                        behavior = 0;
+                        defaultSpawn(behavior, 1);
                     }
                     break;
                 case 1:
@@ -107,7 +109,7 @@ public class SpawnPillars : MonoBehaviour
                     break;
                 case 2:
                     {
-                        QuickPillarSpawn(behavior);
+                        defaultSpawn(behavior, 0.5f);
                     }
                     break;
                 case 3:
@@ -117,7 +119,7 @@ public class SpawnPillars : MonoBehaviour
                     break;
                 case 4:
                     {
-                        MassPoint(behavior);
+                        MassSpawn(behavior);
                     }
                     break;
                 case 5:
@@ -127,7 +129,7 @@ public class SpawnPillars : MonoBehaviour
                     break;
                 case 6:
                     {
-                        SlowSpawn(behavior);
+                        defaultSpawn(behavior, 2);
                     }
                     break;
 
@@ -142,50 +144,34 @@ public class SpawnPillars : MonoBehaviour
     }
 
 
-
+    //behaviors 0,2,6
     //spawns a single pillar
-    void defaultSpawn(int behavior)
+    void defaultSpawn(int behavior, float multiplier)
     {
-        //gets player Position
-        Vector3 playerPos = player.transform.position;
-
-        GameObject selectedIndicator = null;
-        //bool hasIndicator = false;
-
-        int wallIndex = 0;
 
 
-
-        //stops pillars spawning in an indicator slot that is already being used
-        //while (!hasIndicator)
-        //{
         //Selects Random Wall
-        wallIndex = (int)Random.Range(0, Walls.Length);
+        int wallIndex = Random.Range(0, Walls.Length);
 
         //gets indicators that indicate where pillar will spawn at
         GameObject wall = Walls[wallIndex];
-        List<GameObject> indicators = GetIndicators(wall);
+        List<GameObject> indicatorList = GetIndicators(wall);
 
         //finds select Positions close to player position
         //within about 35 for center Pillar (the pillar on that wall thats closest to players position
         //other select positions must be within about 53?
+        indicatorList = GetIndicatorSelection(indicatorList, wallIndex);
 
-        List<GameObject> indicatorList = GetIndicatorSelection(indicators, wallIndex);
-        //Debug.Log("indicator count = " + indicatorList.Count);
         //selects the indicator that the pillar will spawn from
-        selectedIndicator = SelectedIndicator(indicatorList);
-        //if (selectedIndicator != null) hasIndicator = true;
+        GameObject indicator = SelectedIndicator(indicatorList);
 
-        //}
+        if (indicator == null) return;
 
+        indicator.GetComponent<IndicatorBehavior>().setTimeAwake(indicatorWaitTime * multiplier);
 
-        if (selectedIndicator == null) return;
-
-        selectedIndicator.GetComponent<IndicatorBehavior>().setTimeAwake(indicatorWaitTime);
-
-        float waitTime = selectedIndicator.GetComponent<IndicatorBehavior>().timeAwake;
+        float waitTime = indicator.GetComponent<IndicatorBehavior>().timeAwake;
         if (!gameManager.isBetweenRound)
-            StartCoroutine(IndicatorWaitTime(waitTime, selectedIndicator, wallIndex, behavior));
+            StartCoroutine(IndicatorWaitTime(waitTime, indicator, wallIndex, behavior));
 
     }
 
@@ -194,6 +180,8 @@ public class SpawnPillars : MonoBehaviour
     //spawns an entire row of pillars
     void RowSpawn(int behavior)
     {
+        if (behavior != 1) return;
+
         //selects wall for spawn
         int wallIndex = (int)Random.Range(0, Walls.Length);
         GameObject wall = Walls[wallIndex];
@@ -304,31 +292,81 @@ public class SpawnPillars : MonoBehaviour
 
 
 
-
-
-
-
-
-    //behavior = 2
-    //short indicator wait time and pillar extends quicker
-    void QuickPillarSpawn(int behavior)
-    {
-
-    }
-
-
     //behavior = 3
     //spawns all pillars within range from every wall that converge to a single point
     void PointSpawn(int behaviour)
     {
+        for (int wallIndex = 0; wallIndex < Walls.Length; wallIndex++)
+        {
+            GameObject wall = Walls[wallIndex];
 
+            List<GameObject> indicatorList = GetIndicators(wall);
+
+            indicatorList = GetIndicatorSelection(indicatorList, wallIndex);
+
+            for (int index = 0; index < indicatorList.Count; index++)
+            {
+                indicatorList[index].GetComponent<IndicatorBehavior>().setTimeAwake(indicatorWaitTime);
+
+                float waitTime = indicatorList[index].GetComponent<IndicatorBehavior>().timeAwake;
+                if (!gameManager.isBetweenRound)
+                    StartCoroutine(IndicatorWaitTime(waitTime, indicatorList[index], wallIndex, behaviour));
+                else
+                    break;
+
+            }
+
+            if (gameManager.isBetweenRound) break;
+
+
+        }
     }
 
     //behavior = 4
-    //spawns a bunch of pillars ignoring whether or not they're within range from a single wall
-    void MassPoint(int behavior)
+    //spawns a bunch of pillars ignoring whether or not they're within range from a single wall and recalls all pillars in game
+    void MassSpawn(int behavior)
     {
 
+
+
+
+        //Selects Random Wall
+        int wallIndex = Random.Range(0, Walls.Length);
+
+        //gets indicators that indicate where pillar will spawn at
+        GameObject wall = Walls[wallIndex];
+        List<GameObject> indicatorList = GetIndicators(wall);
+
+        //finds select Positions close to player position
+        //within about 35 for center Pillar (the pillar on that wall thats closest to players position
+        //other select positions must be within about 53?
+        //indicatorList = GetIndicatorSelection(indicatorList, wallIndex);
+
+
+
+        //recalls all pillars in game
+        GameObject[] pillarsInGame = GameObject.FindGameObjectsWithTag("Pillar");
+        for (int index = 0; index < pillarsInGame.Length; index++) pillarsInGame[index].GetComponent<MovePillar>().recall();
+
+
+        //gets rid of half the indicators at random
+        for (int count = 0, length = indicatorList.Count; count < length / 2; count++)
+        {
+            int index = Random.Range(0, indicatorList.Count);
+            indicatorList.RemoveAt(index);
+        }
+
+        for (int index = 0; index < indicatorList.Count; index++)
+        {
+            indicatorList[index].GetComponent<IndicatorBehavior>().setTimeAwake(indicatorWaitTime);
+
+            float waitTime = indicatorList[index].GetComponent<IndicatorBehavior>().timeAwake;
+            if (!gameManager.isBetweenRound)
+                StartCoroutine(IndicatorWaitTime(waitTime, indicatorList[index], wallIndex, behavior));
+            else
+                break;
+
+        }
     }
 
 
@@ -339,17 +377,6 @@ public class SpawnPillars : MonoBehaviour
     {
 
     }
-
-
-    //behavior = 6
-    //spawns a pillar that extends slowly
-    void SlowSpawn(int behavior)
-    {
-
-    }
-
-
-
 
 
 
@@ -371,8 +398,13 @@ public class SpawnPillars : MonoBehaviour
         {
             //spawns pillar
             GameObject Pillar = Instantiate(pillar, GetSpawnPos(indicatorPos, wallIndex), Quaternion.Euler(rotation));
+            MovePillar pillarScript = Pillar.GetComponent<MovePillar>();
 
-            pillar.GetComponent<MovePillar>().SpawnIndicator(SelectedIndicator);
+            pillarScript.SpawnIndicator(SelectedIndicator);
+            //if spawn type is quick
+            if (behavior == 2) pillarScript.setSpeed(pillarScript.speed * 2);
+            else if (behavior == 6) pillarScript.setSpeed(pillarScript.speed / 2);
+
         }
 
     }
@@ -661,37 +693,51 @@ public class SpawnPillars : MonoBehaviour
     {
         int weightSum = calcWeightSum();
         int randomInt = Random.Range(0, weightSum);
+        //int[] summations = { summation(weights, 0), summation(weights, 1), summation(weights, 2) , summation(weights, 3) , summation(weights, 4) , summation(weights, 5) };
+        int result = 0;
 
-        int result = -1;
-
-        if (randomInt < weights[0])
+        if (randomInt < summation(weights, 0))
         {
+            Debug.Log("inside 0");
+
             result = 0;
         }
         else if (randomInt < summation(weights, 1))
         {
+            Debug.Log("inside 1");
+
             result = 1;
         }
         else if (randomInt < summation(weights, 2))
         {
+            Debug.Log("inside 2");
+
             result = 2;
         }
         else if (randomInt < summation(weights, 3))
         {
+            Debug.Log("inside 3");
             result = 3;
         }
         else if (randomInt < summation(weights, 4))
         {
+            Debug.Log("inside 4");
+
             result = 4;
         }
         else if (randomInt < summation(weights, 5))
         {
+            Debug.Log("inside 5");
+
             result = 5;
         }
-        else
+        else if (randomInt < summation(weights, 6))
         {
+            Debug.Log("inside 6");
+
             result = 6;
         }
+        //else result = 0;
         return result;
     }
 
@@ -715,8 +761,8 @@ public class SpawnPillars : MonoBehaviour
         {
             sum += values[index];
         }
-
-        return 0;
+        Debug.Log("Summation of " + maxRange + " is " + sum);
+        return sum;
     }
 
 
@@ -726,7 +772,7 @@ public class SpawnPillars : MonoBehaviour
     void adjustWeights()
     {
 
-        int difficulty = 0;
+        //int difficulty = 0;
 
         //    public int[] weights = { 0, 0, 0, 0, 0, 0, 100 };
         //default, row, quick, point, Mass, adjacent, slow
@@ -735,56 +781,57 @@ public class SpawnPillars : MonoBehaviour
         switch (difficulty)
         {
             //easy: used default, quick, slow spawn types
-            case 1:
+            default:
                 {
-                    if (gameManager.roundNumber < 10)
+                    if (gameManager.roundNumber < 5)
                     {
-                        weights[0] += 5;
-                        weights[6] -= 5;
+                        weights[0] += 10;
+                        //weights[6] -= 5;
                     }
-                    else if (gameManager.roundNumber < 20)
+                    else if (gameManager.roundNumber < 10)
                     {
-                        weights[0] -= 5;
+                        //weights[0] -= 5;
                         weights[2] += 5;
-                        weights[6] -= 2;
+                        //weights[6] -= 2;
                     }
                     else
                     {
-                        weights[0] += 1;
-                        weights[1] += 1;
+                        weights[0] += 2;
+                        //weights[1] += 1;
                         weights[2] += 1;
-                        weights[3] += 1;
-                        weights[4] += 1;
-                        weights[5] += 1;
-                        weights[6] += 1;
+                        //weights[3] += 1;
+                        //weights[4] += 1;
+                        //weights[5] += 1;
+                        //weights[6] += 1;
                     }
                 }
                 break;
             //medium: uses default, quick, point, slow spawn types
             case 2:
                 {
-                    if (gameManager.roundNumber < 10)
+                    if (gameManager.roundNumber < 5)
                     {
                         weights[0] += 5;
                         weights[2] += 2;
-                        weights[3] += 1;
-                        weights[6] -= 5;
+                        //weights[3] += 1;
+                        //weights[6] -= 5;
                     }
-                    else if (gameManager.roundNumber < 20)
+                    else if (gameManager.roundNumber < 10)
                     {
-                        weights[0] -= 2;
+                        //weights[0] -= 2;
+                        weights[1] += 1;
                         weights[2] += 5;
-                        weights[3] += 1;
-                        weights[6] -= 5;
+                        //weights[3] += 1;
+                        //weights[6] -= 5;
                     }
                     else
                     {
                         weights[0] += 1;
                         weights[1] += 1;
                         weights[2] += 1;
-                        weights[3] += 1;
-                        weights[4] += 1;
-                        weights[5] += 1;
+                        //weights[3] += 1;
+                        //weights[4] += 1;
+                        //weights[5] += 1;
                         weights[6] += 1;
                     }
                 }
@@ -792,32 +839,33 @@ public class SpawnPillars : MonoBehaviour
             //hard: uses default, row, quick, point, Mass, adjacent, slow spawn types
             case 3:
                 {
-                    if (gameManager.roundNumber < 10)
+                    if (gameManager.roundNumber < 5)
                     {
                         weights[0] += 2;
-                        weights[1] += 1;
-                        weights[2] += 2;
-                        weights[3] += 5;
-                        weights[5] += 1;
+                        //weights[1] += 1;
+                        weights[2] += 3;
+                        //weights[3] += 2;
+                        //weights[5] += 1;
                         weights[6] += 1;
                     }
-                    else if (gameManager.roundNumber < 20)
+                    else if (gameManager.roundNumber < 10)
                     {
                         weights[0] += 1;
-                        weights[1] += 1;
-                        weights[2] += 2;
-                        weights[3] -= 3;
-                        weights[4] += 1;
-                        weights[5] += 1;
+                        weights[1] += 5;
+                        weights[2] += 5;
+                        //weights[3] += 3;
+                        weights[4] += 5;
+                        weights[5] += 5;
                     }
                     else
                     {
-                        weights[0] -= 1;
+                        weights[0] += 1;
                         weights[1] += 1;
                         weights[2] += 1;
                         weights[3] += 1;
                         weights[4] += 1;
-                        weights[5] += 1;
+                        //weights[5] += 1;
+                        weights[6] += 1;
                     }
                 }
                 break;
@@ -839,43 +887,48 @@ public class SpawnPillars : MonoBehaviour
 
 
 
-
+    /*
+     * spawn types
+     * 0 = default
+     * 1 = row
+     * 2 = quick
+     * 3 = point
+     * 4 = mass
+     * 5 = adjacent
+     * 6 = slow
+     * 
+     * 
+     * 
+     * 
+     */
 
 
     void setWeights()
     {
         switch (difficulty)
         {
-            case 1:
+            default:
                 {
                     weights[6] = 100;
+
                 }
                 break;
             case 2:
                 {
                     weights[0] = 100;
-                    /****TEMPORARY****/
-                    //weights[6] = 100;
-                    weights[1] = 100;
-
+                    weights[6] = 50;
 
                 }
                 break;
             case 3:
                 {
                     weights[0] = 100;
-                    weights[2] = 100;
-                    weights[6] = 100;
+
                 }
                 break;
         }
 
         weightsCheck();
-    }
-
-    void adjustIndicatorTime()
-    {
-        if (indicatorWaitTime > 1.5f) indicatorWaitTime -= 0.02f;
     }
 
 
@@ -899,18 +952,18 @@ public class SpawnPillars : MonoBehaviour
 
         if (difficulty == 1)
         {
-            repeatSpawnTime = 12;
+            repeatSpawnTime = 3.5f;
             indicatorWaitTime = 4;
         }
         if (difficulty == 2)
         {
-            repeatSpawnTime = 10;
+            repeatSpawnTime = 3;
             indicatorWaitTime = 3.5f;
 
         }
         if (difficulty == 3)
         {
-            repeatSpawnTime = 8;
+            repeatSpawnTime = 2.5f;
             indicatorWaitTime = 3;
 
         }

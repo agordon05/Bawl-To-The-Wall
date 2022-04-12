@@ -13,10 +13,19 @@ public class PlayerControls : MonoBehaviour
     public GameObject LeftController;
     public GameObject RightController;
 
+    private AudioSource audioSource;
+    public AudioClip thrustSound;
+
+    public float boost = 30;
+    public float maxSpeed = 50;
 
 
 
-    public float maxSpeed = 10;
+    public void Start()
+    {
+        audioSource = gameObject.AddComponent<AudioSource>();
+    }
+
 
     private void Awake()
     {
@@ -75,8 +84,14 @@ public class PlayerControls : MonoBehaviour
             handDirection = RightController.transform.forward;
         }
 
-        float velocity = rigidbody.velocity.magnitude;
-        rigidbody.AddForce(handDirection * maxSpeed, ForceMode.Impulse);
+
+        audioSource.PlayOneShot(thrustSound);
+
+        rigidbody.AddForce(handDirection * boost, ForceMode.Impulse);
+
+        if (rigidbody.velocity.magnitude > maxSpeed)
+            rigidbody.velocity = Vector3.ClampMagnitude(rigidbody.velocity, maxSpeed);
+
     }
 
 
