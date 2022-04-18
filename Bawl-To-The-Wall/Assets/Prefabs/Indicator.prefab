@@ -746,6 +746,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 5efa41faebe12634db9ffad659cb294c, type: 3}
   sound: {fileID: 0}
   spawnManager: {fileID: 0}
+  warningPillar: {fileID: 1464158311779703284, guid: 5d25485b1755943058a448dcda43cd06, type: 3}
 --- !u!82 &6168016283812414821
 AudioSource:
   m_ObjectHideFlags: 0

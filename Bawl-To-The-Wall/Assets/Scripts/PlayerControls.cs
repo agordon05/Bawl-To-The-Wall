@@ -16,8 +16,8 @@ public class PlayerControls : MonoBehaviour
     private AudioSource audioSource;
     public AudioClip thrustSound;
 
-    public float boost = 30;
-    public float maxSpeed = 50;
+    public float boost = 15;
+    public float maxSpeed = 40;
 
 
 

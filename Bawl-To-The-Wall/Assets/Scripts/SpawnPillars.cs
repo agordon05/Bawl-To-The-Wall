@@ -42,6 +42,7 @@ public class SpawnPillars : MonoBehaviour
     public float indicatorWaitTime = 3;
 
     private int[] weights = { 0, 0, 0, 0, 0, 0, 0 };
+    private int[] maxWeightRatio = { 150, 70, 143, 57, 57, 0, 93 };
 
     /****TEMPORARY****/
     private bool[] finishedSpawnTypes = { true, true, true, true, true, false, true };
@@ -70,7 +71,9 @@ public class SpawnPillars : MonoBehaviour
 
 
 
-
+    /***TEMPORARY***/
+    //int BEHAVIOR = 4;
+    //bool played = false;
 
     void SpawnPillar()
     {
@@ -92,7 +95,7 @@ public class SpawnPillars : MonoBehaviour
                 }
             }
 
-            //behavior = 4;
+            //int behavior = BEHAVIOR;
 
             switch (behavior)
             {
@@ -149,9 +152,13 @@ public class SpawnPillars : MonoBehaviour
     void defaultSpawn(int behavior, float multiplier)
     {
 
+        //if (played) return;
+        //played = true;
 
         //Selects Random Wall
-        int wallIndex = Random.Range(0, Walls.Length);
+        int wallIndex = Random.Range(0, Walls.Length); ;
+
+        //int wallIndex = 5;
 
         //gets indicators that indicate where pillar will spawn at
         GameObject wall = Walls[wallIndex];
@@ -180,6 +187,9 @@ public class SpawnPillars : MonoBehaviour
     //spawns an entire row of pillars
     void RowSpawn(int behavior)
     {
+        //if (played) return;
+        //played = true;
+
         if (behavior != 1) return;
 
         //selects wall for spawn
@@ -296,6 +306,9 @@ public class SpawnPillars : MonoBehaviour
     //spawns all pillars within range from every wall that converge to a single point
     void PointSpawn(int behaviour)
     {
+        //if (played) return;
+        //played = true;
+
         for (int wallIndex = 0; wallIndex < Walls.Length; wallIndex++)
         {
             GameObject wall = Walls[wallIndex];
@@ -327,11 +340,13 @@ public class SpawnPillars : MonoBehaviour
     void MassSpawn(int behavior)
     {
 
-
-
+        //if (played) return;
+        //played = true;
 
         //Selects Random Wall
         int wallIndex = Random.Range(0, Walls.Length);
+        //int wallIndex = 5;
+
 
         //gets indicators that indicate where pillar will spawn at
         GameObject wall = Walls[wallIndex];
@@ -410,7 +425,7 @@ public class SpawnPillars : MonoBehaviour
     }
 
 
-    Vector3 GetSpawnPos(Vector3 indicatorPos, float wallIndex)
+    public Vector3 GetSpawnPos(Vector3 indicatorPos, float wallIndex)
     {
 
 
@@ -854,16 +869,17 @@ public class SpawnPillars : MonoBehaviour
                         weights[1] += 5;
                         weights[2] += 5;
                         //weights[3] += 3;
-                        weights[4] += 5;
-                        weights[5] += 5;
+                        //weights[4] += 5;
+                        //weights[5] += 5;
+                        weights[6] += 5;
                     }
                     else
                     {
                         weights[0] += 1;
                         weights[1] += 1;
                         weights[2] += 1;
-                        weights[3] += 1;
-                        weights[4] += 1;
+                        weights[3] += 3;
+                        weights[4] += 3;
                         //weights[5] += 1;
                         weights[6] += 1;
                     }
@@ -879,7 +895,7 @@ public class SpawnPillars : MonoBehaviour
 
         for (int index = 0; index < weights.Length; index++)
         {
-            if (weights[index] < 0) weights[index] = 0;
+            if (weights[index] > maxWeightRatio[index]) weights[index] = maxWeightRatio[index];
         }
     }
 

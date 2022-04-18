@@ -6,6 +6,7 @@ public class MovePillar : MonoBehaviour
 {
     private GameManager gameManager;
     public GameObject sensor;
+    private GameObject instantiatedWarningPillar;
 
     public bool isMoving;
     public bool isMovingForward;
@@ -15,10 +16,8 @@ public class MovePillar : MonoBehaviour
     public float extendedWaitTime = 5.0f;
     private float timeAwake;
 
-    public AudioClip pillarHittingSound;
-    public AudioClip pillarHittingSound2;
-    public AudioClip pillarHittingSound3;
     public List<AudioClip> pillarHitSounds;
+    public AudioClip pillarMovingSound;
 
 
     public ParticleSystem explosionParticles;
@@ -78,11 +77,14 @@ public class MovePillar : MonoBehaviour
         isMovingForward = true;
         spawnPos = transform.position;
 
+        
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (instantiatedWarningPillar == null && gameManager.getDifficulty() == 1 && spawnIndicator != null)
+            instantiatedWarningPillar = spawnIndicator.GetComponent<IndicatorBehavior>().getWarningPillar();
 
         timeAwake += Time.deltaTime;
         if (timeAwake > 10 || gameManager.isBetweenRound)
@@ -93,9 +95,16 @@ public class MovePillar : MonoBehaviour
 
         if (!gameManager.isGameOver)
         {
+
+            
+
             //rbPosConstraint();
             if (isMoving)
             {
+
+                if (pillarMovingSound != null && !audioSource.isPlaying) audioSource.PlayOneShot(pillarMovingSound);
+
+
                 //Debug.Log("isMoving is true");
                 if (isMovingForward)
                 {
@@ -122,6 +131,8 @@ public class MovePillar : MonoBehaviour
     //stops pillar from moving when fully extended and waits for extendedWaitTime Seconds
     IEnumerator waitTime()
     {
+        if (instantiatedWarningPillar != null) Destroy(instantiatedWarningPillar);
+        audioSource.Stop();
         audioSource.volume = gameManager.volume;
         audioSource.PlayOneShot(pillarHitSounds[1]);
         Instantiate(explosionParticles, sensor.transform.position, Quaternion.Euler(0, 0, 0));
@@ -490,6 +501,8 @@ public class MovePillar : MonoBehaviour
 
     private void OnDestroy()
     {
+        if (instantiatedWarningPillar != null) Destroy(instantiatedWarningPillar);
+
         if (spawnIndicator != null)
         {
             //Debug.Log("Spawn Indicator has switched to false");
@@ -502,6 +515,7 @@ public class MovePillar : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        if (instantiatedWarningPillar != null) Destroy(instantiatedWarningPillar);
 
         if (other.gameObject == spawnIndicator || other.CompareTag("Boundary") || isColliding) return;
 

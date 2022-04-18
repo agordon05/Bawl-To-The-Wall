@@ -18,6 +18,8 @@ TagManager:
   - Orb
   - Controller
   - Particles
+  - Spawn Manager
+  - Warning Pillar
   layers:
   - Default
   - TransparentFX

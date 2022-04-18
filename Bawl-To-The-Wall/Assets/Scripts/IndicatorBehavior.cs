@@ -6,11 +6,11 @@ using UnityEngine;
 public class IndicatorBehavior : MonoBehaviour
 {
 
-    private bool isMainMenu;
+    //private bool isMainMenu;
     public float timeAwake = 3;
     public float volumeLevel;
     public bool isActive;
-    public int wall;
+    private int wall;
 
     public float MainMenuIconMinTime = 3;
     public float MainMenuIconMaxTime = 5;
@@ -32,17 +32,23 @@ public class IndicatorBehavior : MonoBehaviour
     public AudioClip[] soundList;
     public AudioSource sound;
 
-    public GameObject spawnManager;
+    //public GameObject spawnManager;
+    public GameObject warningPillar;
+    private GameObject instantiatedWarningPillar;
+
 
     private GameManager gameManager;
+    private GameObject spawnManager;
 
 
 
     // Start is called before the first frame update
     void Start()
     {
+        
         gameManager = GameObject.Find("Game Manager").GetComponent<GameManager>();
-        isMainMenu = false;
+        spawnManager = GameObject.FindGameObjectWithTag("Spawn Manager");
+        //isMainMenu = false;
         isActive = false;
         sound = GetComponent<AudioSource>();
         getStartingWall();
@@ -57,6 +63,13 @@ public class IndicatorBehavior : MonoBehaviour
 
     IEnumerator indicatorTimeAwake(int behavior)
     {
+
+        if (warningPillar != null && gameManager.getDifficulty() == 1)
+        {
+            SpawnPillars spawnPillarsScript = spawnManager.GetComponent<SpawnPillars>();
+            instantiatedWarningPillar = Instantiate(warningPillar, spawnPillarsScript.GetSpawnPos(transform.position, wall) + Offset(wall), gameObject.transform.rotation);
+        }
+
 
         //Debug.Log("inside Activate,     ");
 
@@ -76,6 +89,66 @@ public class IndicatorBehavior : MonoBehaviour
     }
 
 
+    private Vector3 Offset(int wallIndex)
+    {
+        float spawnOffset = spawnManager.GetComponent<SpawnPillars>().spawnOffset;
+        Vector3 offset;
+        int offsetMultiplier = 2;
+        switch (wallIndex)
+        {
+            //ceiling
+            default:
+                {
+                    offset = new Vector3(0, -offsetMultiplier * spawnOffset, 0);
+                }
+                break;
+                //floor
+            case 1:
+                {
+                    offset = new Vector3(0, offsetMultiplier * spawnOffset, 0);
+
+                }
+                break;
+                //front
+            case 2:
+                {
+                    offset = new Vector3(-offsetMultiplier * spawnOffset, 0, 0);
+
+                }
+                break;
+                //back
+            case 3:
+                {
+                    offset = new Vector3(offsetMultiplier * spawnOffset, 0, 0);
+
+                }
+                break;
+                //left
+            case 4:
+                {
+                    offset = new Vector3(0, 0, -offsetMultiplier * spawnOffset);
+
+                }
+                break;
+                //right
+            case 5:
+                {
+                    offset = new Vector3(0, 0, offsetMultiplier * spawnOffset);
+
+                }
+                break;
+
+
+        }
+
+
+
+
+
+        return offset;
+    }
+
+
     //value corresponds to the type of indicator and sound that should be used
     public void Activate(int behavior)
     {
@@ -86,24 +159,24 @@ public class IndicatorBehavior : MonoBehaviour
         }
     }
 
-    IEnumerator IconWait(float randTime, int randInt)
-    {
-        yield return new WaitForSeconds(randTime);
-        icons[randInt].SetActive(false);
-    }
+    //IEnumerator IconWait(float randTime, int randInt)
+    //{
+    //    yield return new WaitForSeconds(randTime);
+    //    icons[randInt].SetActive(false);
+    //}
 
 
-    void MainMenuBehavior()
-    {
-        while (isMainMenu)
-        {
-            int randInt = (int)Random.Range(0, icons.Length);
-            float randTime = Random.Range(MainMenuIconMinTime, MainMenuIconMaxTime);
-            icons[randInt].SetActive(true);
-            StartCoroutine(IconWait(randTime, randInt));
+    //void MainMenuBehavior()
+    //{
+    //    while (isMainMenu)
+    //    {
+    //        int randInt = (int)Random.Range(0, icons.Length);
+    //        float randTime = Random.Range(MainMenuIconMinTime, MainMenuIconMaxTime);
+    //        icons[randInt].SetActive(true);
+    //        StartCoroutine(IconWait(randTime, randInt));
 
-        }
-    }
+    //    }
+    //}
 
 
 
@@ -144,11 +217,11 @@ public class IndicatorBehavior : MonoBehaviour
 
 
 
-    void setMainMenu(bool Value)
-    {
-        isMainMenu = Value;
-        MainMenuBehavior();
-    }
+    //void setMainMenu(bool Value)
+    //{
+    //    isMainMenu = Value;
+    //    MainMenuBehavior();
+    //}
 
 
     void playSound(int behavior)
@@ -157,22 +230,24 @@ public class IndicatorBehavior : MonoBehaviour
         sound.PlayOneShot(soundList[behavior]);
     }
 
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.CompareTag("Player"))
-        {
-            SpawnPillars spawnPillarScript = spawnManager.GetComponent<SpawnPillars>();
-            spawnPillarScript.SpawnPillar(timeAwake, gameObject, wall, 0);
+    //private void OnTriggerEnter(Collider other)
+    //{
+    //    if (other.CompareTag("Player"))
+    //    {
+    //        SpawnPillars spawnPillarScript = spawnManager.GetComponent<SpawnPillars>();
+    //        spawnPillarScript.SpawnPillar(timeAwake, gameObject, wall, 0);
 
 
 
-        }
-    }
+    //    }
+    //}
 
     void isBetweenRound()
     {
         if (gameManager.isBetweenRound)
         {
+            if (instantiatedWarningPillar != null) Destroy(instantiatedWarningPillar);
+
             isActive = false;
             for (int n = 0; n < icons.Length; n++)
             {
@@ -188,6 +263,10 @@ public class IndicatorBehavior : MonoBehaviour
         timeAwake = time;
     }
 
+    public GameObject getWarningPillar()
+    {
+        return instantiatedWarningPillar;
+    }
 
 
 }

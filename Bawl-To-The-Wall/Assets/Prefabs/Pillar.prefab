@@ -73,7 +73,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3516011713532215528}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 130, y: -150, z: 130}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 30, y: 348.75, z: 30}
   m_Children:
   - {fileID: 6572723386432126401}
@@ -160,17 +160,12 @@ MonoBehaviour:
   isDone: 0
   speed: 400
   extendedWaitTime: 5
-  pillarHittingSound: {fileID: 8300000, guid: b142aa02a8648c94b999212277216d05, type: 3}
-  pillarHittingSound2: {fileID: 8300000, guid: 50e77f85709833045a5e5dc665b403c8, type: 3}
-  pillarHittingSound3: {fileID: 8300000, guid: 7bef0064f8567430cac22499c6b93d4f, type: 3}
   pillarHitSounds:
   - {fileID: 8300000, guid: b142aa02a8648c94b999212277216d05, type: 3}
   - {fileID: 8300000, guid: 50e77f85709833045a5e5dc665b403c8, type: 3}
   - {fileID: 8300000, guid: 7bef0064f8567430cac22499c6b93d4f, type: 3}
   - {fileID: 8300000, guid: 7e26c9daf4c32483b9c2790e662d3f1b, type: 3}
-  - {fileID: 8300000, guid: ff5f85da24bc943d1abdc5760a22bc81, type: 3}
-  - {fileID: 8300000, guid: 7bef0064f8567430cac22499c6b93d4f, type: 3}
-  - {fileID: 8300000, guid: 7bef0064f8567430cac22499c6b93d4f, type: 3}
+  pillarMovingSound: {fileID: 8300000, guid: d0cf6a86b0d1661468d6b796b41d4ffd, type: 3}
   explosionParticles: {fileID: 19886120, guid: 5702e2a6fea804b45b49b70d8feaf7ae, type: 3}
   spawnIndicator: {fileID: 0}
   frontBound: 0

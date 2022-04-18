@@ -13,6 +13,7 @@ public class GameManager : MonoBehaviour
 
 
     public int roundNumber = 0;
+    private int difficulty;
 
     public Canvas MainCanvas;
     public Canvas playerCanvas;
@@ -48,7 +49,10 @@ public class GameManager : MonoBehaviour
     public AudioClip buttonPressedSound;
     public AudioClip backButtonPressedSound;
     public AudioClip roundCompleteSound;
+    public AudioClip newRoundBeginsSound;
     public AudioClip orbPickedUp;
+    public AudioClip gameOverSound;
+    
 
     public GameObject musicManager;
     private MusicPlayer musicPlayer;
@@ -97,7 +101,7 @@ public class GameManager : MonoBehaviour
         orbCounterText.SetActive(false);
         newRoundText.SetActive(false);
 
-        //startGame(3);
+        //startGame(2);
     }
 
     // Update is called once per frame
@@ -182,6 +186,8 @@ public class GameManager : MonoBehaviour
         orbCounterText.SetActive(false);
         newRoundText.SetActive(false);
 
+        audioSource.PlayOneShot(gameOverSound);
+
         //Debug.Log("Game Over: " + "true");
         isGameActive = false;
         isGameOver = true;
@@ -221,18 +227,26 @@ public class GameManager : MonoBehaviour
         if (difficulty == 1)
         {
             //Debug.Log("Difficulty: Easy");
+            this.difficulty = 1;
             orbsPerRound = 1;
         }
         else if (difficulty == 2)
         {
             //Debug.Log("Difficulty: Medium");
+            this.difficulty = 2;
+
             orbsPerRound = 3;
         }
         else
         {
             //Debug.Log("Difficulty: Hard");
+            this.difficulty = 3;
             orbsPerRound = 5;
         }
+
+
+
+
 
         updateRoundCount();
         isGameActive = true;
@@ -268,8 +282,10 @@ public class GameManager : MonoBehaviour
 
     public void newRound()
     {
+        DestroyWarningPillars();
         if (isGameOver == false)
         {
+            audioSource.PlayOneShot(roundCompleteSound);
             orbCounterText.SetActive(false);
             pillarSpawnScript.newRound();
             if (orbsPerRound < maxOrbsPerRound) orbsPerRound++;
@@ -301,11 +317,13 @@ public class GameManager : MonoBehaviour
         orbCounterText.SetActive(true);
         pillarSpawnScript.startRound();
         isBetweenRound = false;
+        audioSource.PlayOneShot(newRoundBeginsSound);
     }
 
 
     IEnumerator waitToRestart()
     {
+        DestroyWarningPillars();
         float time = 5;
         TextMeshProUGUI textBox = returnToMenu.GetComponent<TMPro.TextMeshProUGUI>();
         if (textBox == null) Debug.Log("textBox is null");
@@ -374,5 +392,25 @@ public class GameManager : MonoBehaviour
 
 
     }
+
+    private void DestroyWarningPillars()
+    {
+        GameObject[] warningPillars = GameObject.FindGameObjectsWithTag("Warning Pillar");
+
+        for(int index = 0; index < warningPillars.Length; index++)
+        {
+            Destroy(warningPillars[index]);
+        }
+    }
+
+
+
+    public int getDifficulty()
+    {
+        return difficulty;
+    }
+
+
+
 
 }
