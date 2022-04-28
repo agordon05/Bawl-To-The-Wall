@@ -12,7 +12,7 @@ public class GameManager : MonoBehaviour
     public bool isBetweenRound;
 
 
-    public int roundNumber = 0;
+    private int roundNumber = 0;
     private int difficulty;
 
     public Canvas MainCanvas;
@@ -31,11 +31,11 @@ public class GameManager : MonoBehaviour
     public GameObject spawnManager;
 
 
-    public float volume = 1.0f;
-    public float musicVolume = 1.0f;
+    private float volume = 1.0f;
+    private float musicVolume = 1.0f;
 
-    public int orbCount = 0;
-    public int orbsPerRound = 0;
+    private int orbCount = 0;
+    private int orbsPerRound = 0;
     private int maxOrbsPerRound = 30;
 
 
@@ -65,7 +65,7 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
+        
 
         pillarSpawnScript = spawnManager.GetComponent<SpawnPillars>();
         spawnOrbsScript = spawnManager.GetComponent<SpawnOrbs>();
@@ -166,8 +166,14 @@ public class GameManager : MonoBehaviour
         musicVolume = volumeLevel;
         musicPlayer.setVolume(musicVolume);
     }
-
-
+    public float getMusicVolume()
+    {
+        return musicVolume;
+    }
+    public float getVolume()
+    {
+        return volume;
+    }
 
 
 
@@ -294,7 +300,7 @@ public class GameManager : MonoBehaviour
 
     }
 
-    IEnumerator betweenRounds()
+    private IEnumerator betweenRounds()
     {
         isBetweenRound = true;
 
@@ -321,7 +327,7 @@ public class GameManager : MonoBehaviour
     }
 
 
-    IEnumerator waitToRestart()
+    private IEnumerator waitToRestart()
     {
         DestroyWarningPillars();
         float time = 5;
@@ -357,7 +363,7 @@ public class GameManager : MonoBehaviour
 
     }
 
-    void updateRoundCount()
+    private void updateRoundCount()
     {
         roundNumber++;
         TextMeshProUGUI roundCounter = roundCountText.GetComponent<TMPro.TextMeshProUGUI>();
@@ -411,6 +417,9 @@ public class GameManager : MonoBehaviour
     }
 
 
-
+    public int getRoundNumber()
+    {
+        return roundNumber;
+    }
 
 }

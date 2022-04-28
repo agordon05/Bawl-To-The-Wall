@@ -493,7 +493,7 @@ ScriptsOnlyBuild:
     className: AspectRatioFitter
   - hash:
       serializedVersion: 2
-      Hash: d7825de487cbac565b4727716172bab1
+      Hash: ce160099f16a21379cd6100a7c41bd97
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: GameManager
@@ -1027,7 +1027,7 @@ ScriptsOnlyBuild:
     className: DeviceBasedContinuousMoveProvider
   - hash:
       serializedVersion: 2
-      Hash: 2dce38044003ca2447e0fef88bba8727
+      Hash: 539ba063a6503b0a9059fbec0631fc40
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: MovePillar
@@ -1099,7 +1099,7 @@ ScriptsOnlyBuild:
     className: ExitButton
   - hash:
       serializedVersion: 2
-      Hash: d107a4b35f521b181544adbaa3261451
+      Hash: f7d6c99534b216e1810101e3e637ff55
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: IndicatorBehavior
@@ -1171,7 +1171,7 @@ ScriptsOnlyBuild:
     className: XRUIInputModule
   - hash:
       serializedVersion: 2
-      Hash: a1e6a31e53d9ee59331290b8e9f591d0
+      Hash: fb3aef70dd8093e1750574f4b79fc23f
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: SpawnPillars

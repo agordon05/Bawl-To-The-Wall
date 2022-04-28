@@ -33,13 +33,13 @@ public class SpawnPillars : MonoBehaviour
 
     //range from player that a pillar is allowed to instantiate from in a certain wall
     //half the length of the pillar
-    public float PillarOffset;
+    private float PillarOffset = 60;
 
     //transform of opposite wall - where the pillar transform is when fully extended
-    public float spawnOffset = 150;
+    private float spawnOffset = 150;
 
-    public float repeatSpawnTime = 5.0f;
-    public float indicatorWaitTime = 3;
+    private float repeatSpawnTime = 2;
+    private float indicatorWaitTime = 3;
 
     private int[] weights = { 0, 0, 0, 0, 0, 0, 0 };
     private int[] maxWeightRatio = { 150, 70, 143, 57, 57, 0, 93 };
@@ -75,7 +75,7 @@ public class SpawnPillars : MonoBehaviour
     //int BEHAVIOR = 4;
     //bool played = false;
 
-    void SpawnPillar()
+    private void SpawnPillar()
     {
         if (gameManager.isGameActive && !gameManager.isGameOver && !gameManager.isBetweenRound)
         {
@@ -149,7 +149,7 @@ public class SpawnPillars : MonoBehaviour
 
     //behaviors 0,2,6
     //spawns a single pillar
-    void defaultSpawn(int behavior, float multiplier)
+    private void defaultSpawn(int behavior, float multiplier)
     {
 
         //if (played) return;
@@ -176,7 +176,7 @@ public class SpawnPillars : MonoBehaviour
 
         indicator.GetComponent<IndicatorBehavior>().setTimeAwake(indicatorWaitTime * multiplier);
 
-        float waitTime = indicator.GetComponent<IndicatorBehavior>().timeAwake;
+        float waitTime = indicator.GetComponent<IndicatorBehavior>().getTimeAwake();
         if (!gameManager.isBetweenRound)
             StartCoroutine(IndicatorWaitTime(waitTime, indicator, wallIndex, behavior));
 
@@ -185,7 +185,7 @@ public class SpawnPillars : MonoBehaviour
 
     //behavior = 1
     //spawns an entire row of pillars
-    void RowSpawn(int behavior)
+    private void RowSpawn(int behavior)
     {
         //if (played) return;
         //played = true;
@@ -233,15 +233,15 @@ public class SpawnPillars : MonoBehaviour
         {
             IndicatorBehavior indicatorScript = indicatorList[index].GetComponent<IndicatorBehavior>();
             indicatorScript.setTimeAwake(indicatorWaitTime);
-            float waitTime = indicatorScript.timeAwake;
-            if (!gameManager.isBetweenRound && !indicatorScript.isActive)
+            float waitTime = indicatorScript.getTimeAwake();
+            if (!gameManager.isBetweenRound && !indicatorScript.getIsActive())
                 StartCoroutine(IndicatorWaitTime(waitTime, indicatorList[index], wallIndex, behavior));
 
         }
     }
 
 
-    List<GameObject> GetRowsInRange(List<GameObject> rows, int wallIndex)
+    private List<GameObject> GetRowsInRange(List<GameObject> rows, int wallIndex)
     {
         List<GameObject> validRows = new List<GameObject>();
 
@@ -304,7 +304,7 @@ public class SpawnPillars : MonoBehaviour
 
     //behavior = 3
     //spawns all pillars within range from every wall that converge to a single point
-    void PointSpawn(int behaviour)
+    private void PointSpawn(int behaviour)
     {
         //if (played) return;
         //played = true;
@@ -321,7 +321,7 @@ public class SpawnPillars : MonoBehaviour
             {
                 indicatorList[index].GetComponent<IndicatorBehavior>().setTimeAwake(indicatorWaitTime);
 
-                float waitTime = indicatorList[index].GetComponent<IndicatorBehavior>().timeAwake;
+                float waitTime = indicatorList[index].GetComponent<IndicatorBehavior>().getTimeAwake();
                 if (!gameManager.isBetweenRound)
                     StartCoroutine(IndicatorWaitTime(waitTime, indicatorList[index], wallIndex, behaviour));
                 else
@@ -337,7 +337,7 @@ public class SpawnPillars : MonoBehaviour
 
     //behavior = 4
     //spawns a bunch of pillars ignoring whether or not they're within range from a single wall and recalls all pillars in game
-    void MassSpawn(int behavior)
+    private void MassSpawn(int behavior)
     {
 
         //if (played) return;
@@ -375,7 +375,7 @@ public class SpawnPillars : MonoBehaviour
         {
             indicatorList[index].GetComponent<IndicatorBehavior>().setTimeAwake(indicatorWaitTime);
 
-            float waitTime = indicatorList[index].GetComponent<IndicatorBehavior>().timeAwake;
+            float waitTime = indicatorList[index].GetComponent<IndicatorBehavior>().getTimeAwake();
             if (!gameManager.isBetweenRound)
                 StartCoroutine(IndicatorWaitTime(waitTime, indicatorList[index], wallIndex, behavior));
             else
@@ -388,7 +388,7 @@ public class SpawnPillars : MonoBehaviour
 
     //behavior = 5
     //spawns two pillars from a connecting wall
-    void AdjacentSpawn(int behavior)
+    private void AdjacentSpawn(int behavior)
     {
 
     }
@@ -396,7 +396,7 @@ public class SpawnPillars : MonoBehaviour
 
 
 
-    IEnumerator IndicatorWaitTime(float waitTime, GameObject SelectedIndicator, int wallIndex, int behavior)
+    private IEnumerator IndicatorWaitTime(float waitTime, GameObject SelectedIndicator, int wallIndex, int behavior)
     {
         if (gameManager.isBetweenRound) yield return new WaitForSeconds(0);
         SelectedIndicator.GetComponent<IndicatorBehavior>().Activate(behavior);
@@ -417,8 +417,8 @@ public class SpawnPillars : MonoBehaviour
 
             pillarScript.SpawnIndicator(SelectedIndicator);
             //if spawn type is quick
-            if (behavior == 2) pillarScript.setSpeed(pillarScript.speed * 2);
-            else if (behavior == 6) pillarScript.setSpeed(pillarScript.speed / 2);
+            if (behavior == 2) pillarScript.setSpeed(pillarScript.getSpeed() * 2);
+            else if (behavior == 6) pillarScript.setSpeed(pillarScript.getSpeed() / 2);
 
         }
 
@@ -484,7 +484,7 @@ public class SpawnPillars : MonoBehaviour
     }
 
 
-    List<GameObject> GetIndicatorSelection(List<GameObject> indicators, int wallIndex)
+    private List<GameObject> GetIndicatorSelection(List<GameObject> indicators, int wallIndex)
     {
         List<GameObject> newIndicatorList = new List<GameObject>();
 
@@ -545,7 +545,7 @@ public class SpawnPillars : MonoBehaviour
 
 
     //gathers all indicators inside of wall
-    List<GameObject> GetIndicators(GameObject wall)
+    private List<GameObject> GetIndicators(GameObject wall)
     {
 
 
@@ -568,7 +568,7 @@ public class SpawnPillars : MonoBehaviour
 
 
     //gathers all the indicator rows inside of wallIndicators
-    List<GameObject> GetIndicatorRows(GameObject wallIndicators)
+    private List<GameObject> GetIndicatorRows(GameObject wallIndicators)
     {
         //Debug.Log("inside getIndicatorRows");
         List<GameObject> rows = GetGameObjectList(wallIndicators, "Indicator Row");
@@ -584,7 +584,7 @@ public class SpawnPillars : MonoBehaviour
 
 
     //creates a list of all the indicators inside of wall
-    List<GameObject> GetIndicatorList(List<GameObject> indicatorRows)
+    private List<GameObject> GetIndicatorList(List<GameObject> indicatorRows)
     {
         List<GameObject> indicators = new List<GameObject>();
         for (int index = 0; index < indicatorRows.Count; index++)
@@ -607,7 +607,7 @@ public class SpawnPillars : MonoBehaviour
 
 
     //selects an indicator from the list provided
-    GameObject SelectedIndicator(List<GameObject> list)
+    private GameObject SelectedIndicator(List<GameObject> list)
     {
         //makes sure list is not empty
         if (list.Count == 0)
@@ -616,19 +616,16 @@ public class SpawnPillars : MonoBehaviour
         }
 
 
-
-        int randomIndex = -1;
-
         //makes sure there is an indicator available
         if (!AllIndicatorsActive(list))
         {
 
 
-            randomIndex = Random.Range(0, list.Count);
+            int randomIndex = Random.Range(0, list.Count);
 
             GameObject indicator = list[randomIndex];
             IndicatorBehavior script = indicator.GetComponent<IndicatorBehavior>();
-            if (script == null || script.isActive == true)
+            if (script == null || script.getIsActive() == true)
             {
                 return null;
             }
@@ -653,12 +650,12 @@ public class SpawnPillars : MonoBehaviour
 
 
     //makes sure not all indicators are being used
-    bool AllIndicatorsActive(List<GameObject> list)
+    private bool AllIndicatorsActive(List<GameObject> list)
     {
 
         for (int index = 0; index < list.Count; index++)
         {
-            if (!list[index].GetComponent<IndicatorBehavior>().isActive) return false;
+            if (!list[index].GetComponent<IndicatorBehavior>().getIsActive()) return false;
         }
 
         return true;
@@ -675,7 +672,7 @@ public class SpawnPillars : MonoBehaviour
 
 
 
-    Vector3 GetPillarRotation(int selectWall)
+    private Vector3 GetPillarRotation(int selectWall)
     {
         GameObject wall = Walls[selectWall];
 
@@ -690,7 +687,7 @@ public class SpawnPillars : MonoBehaviour
 
 
 
-    List<GameObject> GetGameObjectList(GameObject o, string tag)
+    private List<GameObject> GetGameObjectList(GameObject o, string tag)
     {
         List<GameObject> list = new List<GameObject>();
         for (int index = 0; index < o.transform.childCount; index++)
@@ -704,11 +701,10 @@ public class SpawnPillars : MonoBehaviour
         return list;
     }
 
-    int GetRandBehavior()
+    private int GetRandBehavior()
     {
         int weightSum = calcWeightSum();
         int randomInt = Random.Range(0, weightSum);
-        //int[] summations = { summation(weights, 0), summation(weights, 1), summation(weights, 2) , summation(weights, 3) , summation(weights, 4) , summation(weights, 5) };
         int result = 0;
 
         if (randomInt < summation(weights, 0))
@@ -756,7 +752,7 @@ public class SpawnPillars : MonoBehaviour
         return result;
     }
 
-    int calcWeightSum()
+    private int calcWeightSum()
     {
         int sum = 0;
 
@@ -768,7 +764,7 @@ public class SpawnPillars : MonoBehaviour
         return sum;
     }
 
-    int summation(int[] values, int maxRange)
+    private int summation(int[] values, int maxRange)
     {
         if (maxRange > values.Length) return -1;
         int sum = 0;
@@ -784,12 +780,10 @@ public class SpawnPillars : MonoBehaviour
 
 
 
-    void adjustWeights()
+    private void adjustWeights()
     {
 
-        //int difficulty = 0;
 
-        //    public int[] weights = { 0, 0, 0, 0, 0, 0, 100 };
         //default, row, quick, point, Mass, adjacent, slow
 
         //if game is set to easy
@@ -798,12 +792,12 @@ public class SpawnPillars : MonoBehaviour
             //easy: used default, quick, slow spawn types
             default:
                 {
-                    if (gameManager.roundNumber < 5)
+                    if (gameManager.getRoundNumber() < 5)
                     {
                         weights[0] += 10;
                         //weights[6] -= 5;
                     }
-                    else if (gameManager.roundNumber < 10)
+                    else if (gameManager.getRoundNumber() < 15)
                     {
                         //weights[0] -= 5;
                         weights[2] += 5;
@@ -812,26 +806,26 @@ public class SpawnPillars : MonoBehaviour
                     else
                     {
                         weights[0] += 2;
-                        //weights[1] += 1;
+                        weights[1] += 1;
                         weights[2] += 1;
-                        //weights[3] += 1;
-                        //weights[4] += 1;
+                        weights[3] += 1;
+                        weights[4] += 1;
                         //weights[5] += 1;
-                        //weights[6] += 1;
+                        weights[6] += 1;
                     }
                 }
                 break;
             //medium: uses default, quick, point, slow spawn types
             case 2:
                 {
-                    if (gameManager.roundNumber < 5)
+                    if (gameManager.getRoundNumber() < 5)
                     {
                         weights[0] += 5;
                         weights[2] += 2;
                         //weights[3] += 1;
                         //weights[6] -= 5;
                     }
-                    else if (gameManager.roundNumber < 10)
+                    else if (gameManager.getRoundNumber() < 15)
                     {
                         //weights[0] -= 2;
                         weights[1] += 1;
@@ -844,8 +838,8 @@ public class SpawnPillars : MonoBehaviour
                         weights[0] += 1;
                         weights[1] += 1;
                         weights[2] += 1;
-                        //weights[3] += 1;
-                        //weights[4] += 1;
+                        weights[3] += 1;
+                        weights[4] += 1;
                         //weights[5] += 1;
                         weights[6] += 1;
                     }
@@ -854,7 +848,7 @@ public class SpawnPillars : MonoBehaviour
             //hard: uses default, row, quick, point, Mass, adjacent, slow spawn types
             case 3:
                 {
-                    if (gameManager.roundNumber < 5)
+                    if (gameManager.getRoundNumber() < 5)
                     {
                         weights[0] += 2;
                         //weights[1] += 1;
@@ -863,13 +857,13 @@ public class SpawnPillars : MonoBehaviour
                         //weights[5] += 1;
                         weights[6] += 1;
                     }
-                    else if (gameManager.roundNumber < 10)
+                    else if (gameManager.getRoundNumber() < 10)
                     {
                         weights[0] += 1;
                         weights[1] += 5;
                         weights[2] += 5;
                         //weights[3] += 3;
-                        //weights[4] += 5;
+                        weights[4] += 5;
                         //weights[5] += 5;
                         weights[6] += 5;
                     }
@@ -890,7 +884,7 @@ public class SpawnPillars : MonoBehaviour
     }
 
 
-    void weightsCheck()
+    private void weightsCheck()
     {
 
         for (int index = 0; index < weights.Length; index++)
@@ -919,7 +913,7 @@ public class SpawnPillars : MonoBehaviour
      */
 
 
-    void setWeights()
+    private void setWeights()
     {
         switch (difficulty)
         {
@@ -994,6 +988,10 @@ public class SpawnPillars : MonoBehaviour
         adjustWeights();
     }
 
+    public float getSpawnOffset()
+    {
+        return spawnOffset;
+    }
 
 
 

@@ -8,12 +8,12 @@ public class MovePillar : MonoBehaviour
     public GameObject sensor;
     private GameObject instantiatedWarningPillar;
 
-    public bool isMoving;
-    public bool isMovingForward;
-    public bool isDone;
+    private bool isMoving;
+    private bool isMovingForward;
+    //private bool isDone;
 
-    public float speed = 10.0f;
-    public float extendedWaitTime = 5.0f;
+    private float speed = 400.0f;
+    private float extendedWaitTime = 5.0f;
     private float timeAwake;
 
     public List<AudioClip> pillarHitSounds;
@@ -30,7 +30,7 @@ public class MovePillar : MonoBehaviour
 
 
     //is given after instantiating from Spawn Pillar
-    public GameObject spawnIndicator;
+    private GameObject spawnIndicator;
 
     /*
      * bound positions:
@@ -43,8 +43,8 @@ public class MovePillar : MonoBehaviour
      */
     private float[] bounds = { 351, 0, 355, -355, 176.3f, -176.7f };
 
-    public float frontBound;
-    public float backBound;
+    private float frontBound;
+    private float backBound;
     private float offset = 351 / 2;
 
 
@@ -59,8 +59,8 @@ public class MovePillar : MonoBehaviour
      * 4 = left wall
      * 5 = right wall
      */
-    public float startingWall;
-    public Vector3 spawnPos;
+    private float startingWall;
+    //private Vector3 spawnPos;
 
 
     // Start is called before the first frame update
@@ -75,7 +75,7 @@ public class MovePillar : MonoBehaviour
 
         isMoving = true;
         isMovingForward = true;
-        spawnPos = transform.position;
+        //spawnPos = transform.position;
 
         
     }
@@ -102,7 +102,11 @@ public class MovePillar : MonoBehaviour
             if (isMoving)
             {
 
-                if (pillarMovingSound != null && !audioSource.isPlaying) audioSource.PlayOneShot(pillarMovingSound);
+                if (pillarMovingSound != null && !audioSource.isPlaying)
+                {
+                    audioSource.volume = gameManager.getVolume();
+                    audioSource.PlayOneShot(pillarMovingSound);
+                }
 
 
                 //Debug.Log("isMoving is true");
@@ -129,11 +133,11 @@ public class MovePillar : MonoBehaviour
 
 
     //stops pillar from moving when fully extended and waits for extendedWaitTime Seconds
-    IEnumerator waitTime()
+    private IEnumerator waitTime()
     {
         if (instantiatedWarningPillar != null) Destroy(instantiatedWarningPillar);
         audioSource.Stop();
-        audioSource.volume = gameManager.volume;
+        audioSource.volume = gameManager.getVolume();
         audioSource.PlayOneShot(pillarHitSounds[1]);
         Instantiate(explosionParticles, sensor.transform.position, Quaternion.Euler(0, 0, 0));
         isMoving = false;
@@ -152,7 +156,7 @@ public class MovePillar : MonoBehaviour
 
 
     //gets the front and back bounds to figure out when the pillar will stop and when it will be destroyed
-    void getBounds()
+    private void getBounds()
     {
         switch (startingWall)
         {
@@ -226,7 +230,7 @@ public class MovePillar : MonoBehaviour
      * 4 = left wall
      * 5 = right wall
      */
-    void getStartingWall()
+    private void getStartingWall()
     {
         int xRotation = (int)transform.eulerAngles.x;
         int yRotation = (int)transform.eulerAngles.y;
@@ -266,7 +270,7 @@ public class MovePillar : MonoBehaviour
 
 
 
-    void moveForward()
+    private void moveForward()
     {
         //Debug.Log("Pillar moves");
 
@@ -373,7 +377,7 @@ public class MovePillar : MonoBehaviour
         }
     }
 
-    void moveBackwards()
+    private void moveBackwards()
     {
         switch (startingWall)
         {
@@ -483,7 +487,7 @@ public class MovePillar : MonoBehaviour
     public void SpawnIndicator(GameObject indicator)
     {
         spawnIndicator = indicator;
-        spawnIndicator.GetComponent<IndicatorBehavior>().isActive = true;
+        spawnIndicator.GetComponent<IndicatorBehavior>().setActive(true);
         //Debug.Log("Spawn Indicator has been switched to true");
     }
 
@@ -506,7 +510,7 @@ public class MovePillar : MonoBehaviour
         if (spawnIndicator != null)
         {
             //Debug.Log("Spawn Indicator has switched to false");
-            spawnIndicator.GetComponent<IndicatorBehavior>().isActive = false;
+            spawnIndicator.GetComponent<IndicatorBehavior>().setActive(false);
         }
         Destroy(gameObject);
     }
@@ -560,7 +564,10 @@ public class MovePillar : MonoBehaviour
     }
 
 
-
+    public float getSpeed()
+    {
+        return speed;
+    }
 
 
 }

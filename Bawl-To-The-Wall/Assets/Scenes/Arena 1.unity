@@ -16900,7 +16900,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Volume Settings
+  m_text: Settings
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -33689,10 +33689,6 @@ MonoBehaviour:
   - {fileID: 192643423}
   - {fileID: 923528384}
   - {fileID: 949666522}
-  PillarOffset: 60
-  spawnOffset: 150
-  repeatSpawnTime: 2
-  indicatorWaitTime: 3
 --- !u!4 &1273397266
 Transform:
   m_ObjectHideFlags: 0
@@ -35643,7 +35639,6 @@ MonoBehaviour:
   isGameActive: 0
   isGameOver: 0
   isBetweenRound: 0
-  roundNumber: 0
   MainCanvas: {fileID: 2065468219}
   playerCanvas: {fileID: 1922757144}
   mainMenu: {fileID: 1188454883}
@@ -35655,10 +35650,6 @@ MonoBehaviour:
   returnToMenu: {fileID: 972229807}
   newRoundText: {fileID: 1151081848}
   spawnManager: {fileID: 1273397264}
-  volume: 1
-  musicVolume: 1
-  orbCount: 0
-  orbsPerRound: 5
   orbCounterText: {fileID: 223559665}
   buttonHoverSound: {fileID: 8300000, guid: 32d4b1811dda14a6cb9e059ee8ad17d2, type: 3}
   buttonPressedSound: {fileID: 8300000, guid: 19f89c6e740e7447f9e12a8310d3e973, type: 3}

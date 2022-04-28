@@ -6,14 +6,9 @@ using UnityEngine;
 public class IndicatorBehavior : MonoBehaviour
 {
 
-    //private bool isMainMenu;
-    public float timeAwake = 3;
-    public float volumeLevel;
-    public bool isActive;
+    private float timeAwake = 3;
+    private bool isActive;
     private int wall;
-
-    public float MainMenuIconMinTime = 3;
-    public float MainMenuIconMaxTime = 5;
 
     /*
      * list: (icon (sound))
@@ -28,11 +23,9 @@ public class IndicatorBehavior : MonoBehaviour
      */
     public GameObject[] icons;
 
-    //public AudioSource[] sounds;
     public AudioClip[] soundList;
-    public AudioSource sound;
+    private AudioSource sound;
 
-    //public GameObject spawnManager;
     public GameObject warningPillar;
     private GameObject instantiatedWarningPillar;
 
@@ -61,7 +54,7 @@ public class IndicatorBehavior : MonoBehaviour
         isBetweenRound();
     }
 
-    IEnumerator indicatorTimeAwake(int behavior)
+    private IEnumerator indicatorTimeAwake(int behavior)
     {
 
         if (warningPillar != null && gameManager.getDifficulty() == 1)
@@ -91,7 +84,7 @@ public class IndicatorBehavior : MonoBehaviour
 
     private Vector3 Offset(int wallIndex)
     {
-        float spawnOffset = spawnManager.GetComponent<SpawnPillars>().spawnOffset;
+        float spawnOffset = spawnManager.GetComponent<SpawnPillars>().getSpawnOffset();
         Vector3 offset;
         int offsetMultiplier = 2;
         switch (wallIndex)
@@ -159,28 +152,8 @@ public class IndicatorBehavior : MonoBehaviour
         }
     }
 
-    //IEnumerator IconWait(float randTime, int randInt)
-    //{
-    //    yield return new WaitForSeconds(randTime);
-    //    icons[randInt].SetActive(false);
-    //}
 
-
-    //void MainMenuBehavior()
-    //{
-    //    while (isMainMenu)
-    //    {
-    //        int randInt = (int)Random.Range(0, icons.Length);
-    //        float randTime = Random.Range(MainMenuIconMinTime, MainMenuIconMaxTime);
-    //        icons[randInt].SetActive(true);
-    //        StartCoroutine(IconWait(randTime, randInt));
-
-    //    }
-    //}
-
-
-
-    void getStartingWall()
+    private void getStartingWall()
     {
         int xRotation = (int)transform.eulerAngles.x;
         int yRotation = (int)transform.eulerAngles.y;
@@ -217,32 +190,16 @@ public class IndicatorBehavior : MonoBehaviour
 
 
 
-    //void setMainMenu(bool Value)
-    //{
-    //    isMainMenu = Value;
-    //    MainMenuBehavior();
-    //}
 
 
-    void playSound(int behavior)
+    private void playSound(int behavior)
     {
-        sound.volume = gameManager.volume;
+        sound.volume = gameManager.getVolume();
         sound.PlayOneShot(soundList[behavior]);
     }
 
-    //private void OnTriggerEnter(Collider other)
-    //{
-    //    if (other.CompareTag("Player"))
-    //    {
-    //        SpawnPillars spawnPillarScript = spawnManager.GetComponent<SpawnPillars>();
-    //        spawnPillarScript.SpawnPillar(timeAwake, gameObject, wall, 0);
 
-
-
-    //    }
-    //}
-
-    void isBetweenRound()
+    private void isBetweenRound()
     {
         if (gameManager.isBetweenRound)
         {
@@ -267,6 +224,21 @@ public class IndicatorBehavior : MonoBehaviour
     {
         return instantiatedWarningPillar;
     }
+
+    public bool getIsActive()
+    {
+        return isActive;
+    }
+    public void setActive(bool active)
+    {
+        isActive = active;
+    }
+    public float getTimeAwake()
+    {
+        return timeAwake;
+    }
+
+
 
 
 }

@@ -13,6 +13,9 @@ public class PlayerControls : MonoBehaviour
     public GameObject LeftController;
     public GameObject RightController;
 
+    private GameManager gameManager;
+
+
     private AudioSource audioSource;
     public AudioClip thrustSound;
 
@@ -23,6 +26,7 @@ public class PlayerControls : MonoBehaviour
 
     public void Start()
     {
+        gameManager = GameObject.Find("Game Manager").GetComponent<GameManager>();
         audioSource = gameObject.AddComponent<AudioSource>();
     }
 
@@ -84,7 +88,7 @@ public class PlayerControls : MonoBehaviour
             handDirection = RightController.transform.forward;
         }
 
-
+        audioSource.volume = gameManager.getVolume();
         audioSource.PlayOneShot(thrustSound);
 
         rigidbody.AddForce(handDirection * boost, ForceMode.Impulse);

@@ -7,7 +7,7 @@ public class FacePlayer : MonoBehaviour
     private GameObject player;
     private GameManager gameManager;
     public AudioClip orbPickedUp;
-    private AudioSource audioSource;
+    //private AudioSource audioSource;
 
 
 
@@ -35,7 +35,7 @@ public class FacePlayer : MonoBehaviour
         }
     }
 
-    void RotateToPlayer()
+    private void RotateToPlayer()
     {
         //Vector3 playerDirection = player.transform.position - transform.position;
         //Quaternion rotation = Quaternion.LookRotation(playerDirection);

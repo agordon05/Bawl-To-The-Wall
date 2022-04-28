@@ -7,10 +7,10 @@ public class SpawnOrbs : MonoBehaviour
     public GameObject Orb;
     private GameManager gameManager;
 
-    private int xBound = 170; //(-170, 170)
+    private int xBound = 165; //(-170, 170)
     private int yLowerBound = 20; //(20,340)
     private int yUpperBound = 340;
-    private int zBound = 170; //(-170,170)
+    private int zBound = 165; //(-170,170)
 
     private int difficulty;
 
