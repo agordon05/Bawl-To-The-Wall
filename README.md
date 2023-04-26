@@ -1,6 +1,6 @@
 # Bawl-To-The-Wall
 Game Programming Final - Spring 2022 - Unity VR
 
-https://youtu.be/-RYQkEYZZdg - gameplay
+Gameplay - https://youtu.be/-RYQkEYZZdg
 
-https://youtu.be/A7UhxV1izq8 - Comprehensive view
+Comprehensive view - https://youtu.be/A7UhxV1izq8
